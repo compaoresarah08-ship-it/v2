@@ -69,6 +69,21 @@ test('production Express preserves HTTPS, CSRF and persistent appointment IDs', 
     const admin = await request(base + '/admin/', { headers });
     assert.equal(admin.status, 302);
     assert.equal(admin.headers.location, '/admin/login/');
+    const formBodies = [
+      ['application/x-www-form-urlencoded', 'csrfmiddlewaretoken=test-token&username=&password='],
+      ['multipart/form-data; boundary=noema-test', '--noema-test\r\nContent-Disposition: form-data; name="csrfmiddlewaretoken"\r\n\r\ntest-token\r\n--noema-test\r\nContent-Disposition: form-data; name="hero_image"; filename="test.png"\r\nContent-Type: image/png\r\n\r\nPNG-test-bytes\r\n--noema-test--\r\n'],
+    ];
+    for (const [contentType, body] of formBodies) {
+      const response = await request(base + '/admin/login/', {
+        method: 'POST', headers: { ...headers, 'Content-Type': contentType, 'Transfer-Encoding': 'chunked' }, body,
+      });
+      assert.equal(response.status, 201);
+      const upstream = received.at(-1);
+      assert.equal(upstream.body, body, 'Django receives all form/upload bytes');
+      assert.equal(upstream.headers['content-length'], String(Buffer.byteLength(body)), 'WSGI requires an explicit body length');
+      assert.equal(upstream.headers['transfer-encoding'], undefined);
+      assert.equal(upstream.headers['content-type'], contentType);
+    }
     const lead = await request(base + '/api/leads', { method: 'POST', headers, body: JSON.stringify({ first_name: 'TEST NOEMA' }) });
     assert.equal(lead.status, 201);
     const appointment = await request(base + '/api/appointments', {

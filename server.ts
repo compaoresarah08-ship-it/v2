@@ -61,8 +61,7 @@ async function proxyDjango(req: Request, res: Response): Promise<void> {
       method: req.method,
       headers,
       redirect: 'manual',
-      body: hasBody ? req as unknown as BodyInit : undefined,
-      ...(hasBody ? { duplex: 'half' } : {})
+      body: hasBody && Buffer.isBuffer(req.body) ? req.body : undefined,
     } as RequestInit);
 
     for (const name of ['content-type', 'cache-control', 'location', 'expires', 'last-modified', 'etag']) {
@@ -81,7 +80,9 @@ async function proxyDjango(req: Request, res: Response): Promise<void> {
   }
 }
 
-app.use('/admin', proxyDjango);
+// A bounded raw buffer preserves multipart uploads and lets fetch supply the
+// Content-Length Django's WSGI request parser needs for POST/CSRF form fields.
+app.use('/admin', express.raw({ type: () => true, limit: '20mb', inflate: false }), proxyDjango);
 app.use('/static', proxyDjango);
 app.use('/media', express.static(MEDIA_ROOT, { fallthrough: false, index: false }));
 
