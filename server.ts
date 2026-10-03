@@ -38,20 +38,29 @@ const DELIVERY_DATE_LABEL = ESTIMATED_DELIVERY_DATE.toLocaleDateString('fr-FR', 
 });
 app.set('trust proxy', TRUST_PROXY_HOPS);
 
+function djangoHeaders(req: Request): Record<string, string> {
+  const headers: Record<string, string> = {
+    'x-forwarded-host': req.get('host') || '',
+    'x-forwarded-proto': req.protocol,
+    // Express is private; the public proxy overwrites incoming forwarding headers.
+    'x-forwarded-for': req.ip || req.socket.remoteAddress || '',
+  };
+  for (const name of ['cookie', 'content-type', 'x-csrftoken', 'origin', 'referer']) {
+    const value = req.headers[name];
+    if (value) headers[name] = Array.isArray(value) ? value.join(', ') : value;
+  }
+  return headers;
+}
+
 async function proxyDjango(req: Request, res: Response): Promise<void> {
   try {
-    const headers: Record<string, string> = {};
-    for (const name of ['cookie', 'content-type', 'x-csrftoken', 'origin', 'referer']) {
-      const value = req.headers[name];
-      if (value) headers[name] = Array.isArray(value) ? value.join(', ') : value;
-    }
-    headers['x-forwarded-host'] = req.get('host') || '';
-    headers['x-forwarded-proto'] = req.protocol;
+    const headers = djangoHeaders(req);
 
     const hasBody = !['GET', 'HEAD'].includes(req.method);
     const response = await fetch(`${DJANGO_BASE_URL}${req.originalUrl}`, {
       method: req.method,
       headers,
+      redirect: 'manual',
       body: hasBody ? req as unknown as BodyInit : undefined,
       ...(hasBody ? { duplex: 'half' } : {})
     } as RequestInit);
@@ -81,7 +90,8 @@ app.use(express.json());
 async function requireStaff(req: Request, res: Response, next: () => void): Promise<void> {
   try {
     const response = await fetch(`${DJANGO_API_URL}/auth/me/`, {
-      headers: req.headers.cookie ? { cookie: req.headers.cookie } : {}
+      headers: djangoHeaders(req),
+      redirect: 'manual',
     });
     if (!response.ok) {
       res.status(502).json({ success: false, error: 'Le service d’authentification est momentanément indisponible.' });
@@ -105,12 +115,7 @@ async function requireStaff(req: Request, res: Response, next: () => void): Prom
 app.use('/api/auth', async (req: Request, res: Response) => {
   try {
     const target = `${DJANGO_API_URL}/auth${req.originalUrl.replace('/api/auth', '')}`;
-    const headers: Record<string, string> = {};
-    if (req.headers.cookie) headers.cookie = req.headers.cookie;
-    if (req.headers['x-csrftoken']) headers['x-csrftoken'] = String(req.headers['x-csrftoken']);
-    if (req.headers.host) headers['x-forwarded-host'] = req.headers.host;
-    if (req.headers['x-forwarded-proto']) headers['x-forwarded-proto'] = String(req.headers['x-forwarded-proto']);
-    else headers['x-forwarded-proto'] = req.protocol;
+    const headers = djangoHeaders(req);
     if (req.method !== 'GET' && req.method !== 'HEAD') headers['content-type'] = 'application/json';
 
     const response = await fetch(target, {
@@ -131,9 +136,11 @@ app.use('/api/auth', async (req: Request, res: Response) => {
   }
 });
 
-async function getDjangoCollection<T>(resource: string): Promise<T[] | null> {
+async function getDjangoCollection<T>(resource: string, req: Request): Promise<T[] | null> {
   try {
-    const response = await fetch(`${DJANGO_API_URL}/${resource}/`);
+    const response = await fetch(`${DJANGO_API_URL}/${resource}/`, {
+      headers: djangoHeaders(req), redirect: 'manual', signal: AbortSignal.timeout(15000),
+    });
     if (!response.ok) return null;
     const payload = await response.json();
     if (Array.isArray(payload)) return payload as T[];
@@ -450,7 +457,7 @@ async function generateGeminiReply(systemInstruction: string, history: Array<{ r
 
 // 1. Residence Details
 app.get('/api/residence', async (req: Request, res: Response) => {
-  const residences = await getDjangoCollection<any>('residence');
+  const residences = await getDjangoCollection<any>('residence', req);
   const residence = residences?.[0];
   const data = residence ? {
     ...residenceData,
@@ -467,7 +474,7 @@ app.get('/api/residence', async (req: Request, res: Response) => {
 // 2. Apartments List & Filters
 app.get('/api/apartments', async (req: Request, res: Response) => {
   const { type, status } = req.query;
-  const djangoApartments = await getDjangoCollection<any>('apartments');
+  const djangoApartments = await getDjangoCollection<any>('apartments', req);
   const publishedApartments: Apartment[] = djangoApartments?.length ? djangoApartments.map((apartment) => ({
     id: String(apartment.id),
     ref: apartment.reference,
@@ -518,7 +525,7 @@ app.get('/api/apartments', async (req: Request, res: Response) => {
 
 // 3. Single Apartment by ID
 app.get('/api/apartments/:id', async (req: Request, res: Response) => {
-  const djangoApartments = await getDjangoCollection<any>('apartments');
+  const djangoApartments = await getDjangoCollection<any>('apartments', req);
   const publishedApartments: Apartment[] = djangoApartments?.length ? djangoApartments.map((apartment) => ({
     id: String(apartment.id), ref: apartment.reference, name: apartment.name, type: apartment.apartment_type,
     commercial_segment: apartment.commercial_segment, is_public: apartment.is_public,
@@ -547,7 +554,7 @@ app.get('/api/apartments/:id', async (req: Request, res: Response) => {
 
 // 4. Construction Timeline & Proof of progress
 app.get('/api/construction', async (req: Request, res: Response) => {
-  const djangoMilestones = await getDjangoCollection<any>('construction');
+  const djangoMilestones = await getDjangoCollection<any>('construction', req);
   const publishedMilestones: ConstructionMilestone[] = djangoMilestones?.length ? djangoMilestones.map((milestone) => ({
     id: String(milestone.id), stage_number: milestone.stage_number, title: milestone.title, description: milestone.description,
     status: milestone.status, progress_percent: milestone.progress_percent, date_display: milestone.date_display,
@@ -563,7 +570,7 @@ app.get('/api/construction', async (req: Request, res: Response) => {
 // 5. FAQ Items
 app.get('/api/faq', async (req: Request, res: Response) => {
   const { category } = req.query;
-  const djangoFaqItems = await getDjangoCollection<any>('faq');
+  const djangoFaqItems = await getDjangoCollection<any>('faq', req);
   const publishedFaqItems: FAQItem[] = djangoFaqItems?.length ? djangoFaqItems.map((item) => ({
     id: String(item.id), category: item.category, question: item.question, answer: item.answer,
     display_order: item.display_order, is_published: item.is_published
@@ -669,13 +676,12 @@ app.post('/api/simulations/calculate', async (req: Request, res: Response) => {
 // 7. Lead Capture: Django is the persistent source of truth.
 app.post('/api/leads', async (req: Request, res: Response) => {
   try {
-    const headers: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json' };
-    if (req.headers.cookie) headers.cookie = req.headers.cookie;
-    if (req.headers['x-csrftoken']) headers['x-csrftoken'] = String(req.headers['x-csrftoken']);
+    const headers = { ...djangoHeaders(req), 'content-type': 'application/json', accept: 'application/json' };
     const response = await fetch(`${DJANGO_API_URL}/leads/`, {
       method: 'POST',
       headers,
       body: JSON.stringify(req.body),
+      redirect: 'manual',
     });
     const payload = await response.text();
     res.status(response.status).type('application/json').send(payload);
@@ -707,12 +713,11 @@ app.post('/api/appointments', async (req: Request, res: Response) => {
   }
 
   try {
-    const appointmentHeaders: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json' };
-    if (req.headers.cookie) appointmentHeaders.cookie = req.headers.cookie;
-    if (req.headers['x-csrftoken']) appointmentHeaders['x-csrftoken'] = String(req.headers['x-csrftoken']);
+    const appointmentHeaders = { ...djangoHeaders(req), 'content-type': 'application/json', accept: 'application/json' };
     const notificationResponse = await fetch(`${DJANGO_API_URL}/leads/appointment-notification/`, {
       method: 'POST',
       headers: appointmentHeaders,
+      redirect: 'manual',
       body: JSON.stringify({
         first_name,
         last_name,
@@ -731,38 +736,13 @@ app.post('/api/appointments', async (req: Request, res: Response) => {
       res.status(502).json({ success: false, error: notificationPayload.error || 'La demande n’a pas pu être envoyée par email.' });
       return;
     }
+    res.status(201).json(notificationPayload);
+    return;
   } catch {
     res.status(502).json({ success: false, error: 'Le service email est momentanément indisponible. Votre rendez-vous n’a pas été confirmé.' });
     return;
   }
 
-  const now = new Date().toISOString();
-  const appointmentLead = {
-    id: `lead-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    first_name,
-    last_name,
-    email,
-    phone_whatsapp,
-    residence_country: 'Côte d’Ivoire',
-    pipeline_stage: 'meeting_scheduled' as const,
-    consent_marketing: false,
-    consent_data_processing: true,
-    notes: `Rendez-vous ${appointment_mode === 'presentiel' ? 'présentiel' : 'visio'} demandé le ${appointment_date} à ${appointment_time} (heure d’Abidjan, GMT).`,
-    appointment_date,
-    appointment_time,
-    appointment_mode,
-    appointment_timezone: 'Africa/Abidjan',
-    created_at: now,
-    updated_at: now,
-    follow_up_count: 0
-  };
-
-  leadsDatabase.unshift(appointmentLead);
-  res.status(201).json({
-    success: true,
-    message: 'Votre demande de rendez-vous visio a été enregistrée.',
-    data: { lead_id: appointmentLead.id, pipeline_stage: appointmentLead.pipeline_stage }
-  });
 });
 
 // 8. CRM Leads List with Statistics (For internal preview & admin review)
@@ -771,8 +751,9 @@ app.get('/api/leads', requireStaff, async (req: Request, res: Response) => {
     const response = await fetch(`${DJANGO_API_URL}/leads/`, {
       headers: {
         accept: 'application/json',
-        ...(req.headers.cookie ? { cookie: req.headers.cookie } : {})
-      }
+        ...djangoHeaders(req),
+      },
+      redirect: 'manual',
     });
     res.status(response.status).type('application/json').send(await response.text());
   } catch {

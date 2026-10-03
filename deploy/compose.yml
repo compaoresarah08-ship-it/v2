@@ -1,0 +1,95 @@
+name: noema
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  db:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    env_file:
+      - path: /etc/noema/postgres.env
+        format: raw
+    command: [postgres, -c, shared_buffers=128MB, -c, max_connections=50]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    mem_limit: 768m
+    logging: *logging
+
+  django:
+    build:
+      context: ..
+      dockerfile: deploy/django.Dockerfile
+    image: noema-django:${NOEMA_RELEASE:-local}
+    restart: unless-stopped
+    env_file:
+      - path: /etc/noema/app.env
+        format: raw
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - /srv/noema/media:/data/media
+      - staticfiles:/app/backend/staticfiles
+    networks: [app, data]
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    mem_limit: 1024m
+    logging: *logging
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/web.Dockerfile
+    image: noema-web:${NOEMA_RELEASE:-local}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      DJANGO_API_URL: http://django:8000/api
+      TRUST_PROXY_HOPS: '1'
+      MEDIA_ROOT: /data/media
+      NODE_OPTIONS: --max-old-space-size=512
+    depends_on: [django]
+    volumes:
+      - /srv/noema/media:/data/media:ro
+    networks: [app]
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    mem_limit: 768m
+    logging: *logging
+
+  proxy:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    # Local preflight only. Public ports are supplied by compose.public.yml.
+    ports:
+      - 127.0.0.1:8080:80
+    volumes:
+      - ./nginx.preflight.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on: [web]
+    networks: [app]
+    mem_limit: 128m
+    logging: *logging
+
+networks:
+  app:
+  data:
+    internal: true
+
+volumes:
+  postgres_data:
+  staticfiles:

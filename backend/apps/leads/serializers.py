@@ -3,7 +3,7 @@ from rest_framework.throttling import AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import Lead
@@ -11,14 +11,13 @@ from .models import Lead
 
 def notify_sales_team(subject, message, reply_to=None):
     recipient = getattr(settings, 'NOEMA_CONTACT_EMAIL', 'finance@urielgroup.fr')
-    send_mail(
+    EmailMessage(
         subject,
         message,
         getattr(settings, 'DEFAULT_FROM_EMAIL', recipient),
         [recipient],
-        fail_silently=False,
         reply_to=[reply_to] if reply_to else None,
-    )
+    ).send(fail_silently=False)
 
 
 class LeadSerializer(serializers.ModelSerializer):
@@ -55,6 +54,10 @@ class LeadSerializer(serializers.ModelSerializer):
         if attrs.get('consent_data_processing') is not True:
             raise serializers.ValidationError({'consent_data_processing': 'Ce consentement est requis pour traiter la demande.'})
         return attrs
+
+    def create(self, validated_data):
+        validated_data.pop('website', None)
+        return super().create(validated_data)
 
     def validate_email(self, value):
         validate_email(value)
@@ -179,16 +182,26 @@ class AppointmentNotificationView(APIView):
             f'Fuseau : {timezone}\n\n'
             'Merci de confirmer le créneau avec le prospect.'
         )
+        # Keep the request in PostgreSQL even when the SMTP provider is unavailable.
+        lead = Lead.objects.create(
+            first_name=first_name, last_name=last_name, email=email,
+            phone_whatsapp=phone_whatsapp, residence_country="Côte d'Ivoire",
+            consent_data_processing=True, consent_marketing=False,
+            pipeline_stage='meeting_scheduled', notes=message,
+        )
         try:
-            send_mail(
+            EmailMessage(
                 subject,
                 message,
                 getattr(settings, 'DEFAULT_FROM_EMAIL', recipient),
                 [recipient],
-                fail_silently=False,
                 reply_to=[email],
-            )
+            ).send(fail_silently=False)
         except Exception:
             return Response({'success': False, 'error': 'La demande est valide mais l’envoi de l’email a échoué. Vérifiez la configuration SMTP.'}, status=502)
 
-        return Response({'success': True, 'message': 'La demande de rendez-vous a été envoyée à notre équipe.'}, status=201)
+        return Response({
+            'success': True,
+            'message': 'La demande de rendez-vous a été enregistrée et envoyée à notre équipe.',
+            'data': {'lead_id': lead.pk, 'pipeline_stage': lead.pipeline_stage},
+        }, status=201)
