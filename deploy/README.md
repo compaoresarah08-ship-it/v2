@@ -1,7 +1,7 @@
 # NOEMA — déploiement Hostinger
 
 Préparation basée sur `main`, commit `509652a6d58dc42929a373d18365c405df468831`.
-Ces fichiers n'ont pas encore été installés sur le VPS. Les corrections locales doivent être intégrées à la version déployée et leur commit exact enregistré.
+La version `8b43b866facfb9cf64e655154bec55acd35188c1`, issue de cette base, a été installée en recette privée le 3 octobre 2026. Elle n'est pas encore intégrée à `main` : ne pas confondre cette recette avec une publication finale.
 
 ## Architecture
 
@@ -40,6 +40,7 @@ sudo install -d -m 0755 /srv/noema/acme
 
 `app.env.example` est un modèle sans secret. Le vrai fichier est `/etc/noema/app.env`, propriétaire root, mode 0600 ; `/etc/noema/postgres.env` contient uniquement `POSTGRES_DB`, `POSTGRES_USER` et le même `POSTGRES_PASSWORD`.
 Les fichiers sont lus au format brut : valeurs sans guillemets, une seule ligne par valeur. Ne pas les sourcer comme scripts shell.
+`configure-integrations.py --smtp` ou `--google`, exécuté par le propriétaire dans une session SSH interactive, recueille les paramètres existants sans afficher les secrets.
 Le mot de passe root ne figure dans aucun de ces fichiers.
 Le propriétaire a ensuite autorisé la génération des seuls secrets Django et PostgreSQL directement sur le VPS, sans affichage. `sudo python3 deploy/init-secrets.py` prépare ces deux secrets et refuse d'écraser une configuration existante. Les paramètres SMTP et OAuth restent à saisir par le propriétaire dans un terminal sécurisé.
 
@@ -77,6 +78,9 @@ docker compose -f deploy/compose.yml up -d django web proxy
 
 Ne pas générer de migrations sur le serveur. Créer l'administrateur Django dans un terminal interactif où l'utilisateur saisit lui-même son mot de passe.
 Ne pas afficher `docker inspect`, `docker compose config` résolu ni le contenu des fichiers d'environnement : ils peuvent révéler des secrets.
+
+Le compte PostgreSQL applicatif `noema` ne doit avoir ni SUPERUSER, ni CREATEDB, ni CREATEROLE, ni REPLICATION, ni BYPASSRLS. Il possède uniquement sa base et ses objets applicatifs. Le rôle local `noema_maintenance` est réservé à l'administration via le socket du conteneur et n'a pas de mot de passe réseau. Le rôle initial PostgreSQL `noema_bootstrap_locked` garde le statut interne requis par PostgreSQL mais a NOLOGIN et aucun mot de passe. Ne pas réutiliser le rôle de maintenance dans l'application.
+Après cette séparation, les tests Django doivent employer une base de test préparée séparément ; ne pas rendre à l'application les droits de création de bases pour exécuter les tests.
 
 ## Recette avant DNS
 
@@ -120,7 +124,8 @@ Après propagation : contrôler les serveurs DNS autoritatifs et plusieurs réso
 ## Sauvegardes du nouveau site
 
 `sudo bash deploy/backup.sh` produit un dump PostgreSQL, une archive des médias et leurs SHA-256. Le script ne supprime aucune sauvegarde et ne touche pas à WordPress.
-Compléter par une restauration de test et une copie hors VPS, avant de considérer la sauvegarde validée. Définir ensuite un timer quotidien et une rétention adaptés à l'espace réellement disponible.
+Compléter par une restauration de test et une copie hors VPS, avant de considérer la sauvegarde validée. Les unités `noema-backup.service` et `noema-backup.timer` exécutent le script quotidiennement à partir de `/srv/noema/current`. Le script refuse les exécutions simultanées et s'arrête si l'espace libre devient insuffisant. Il conserve toutes les sauvegardes ; prévoir une rétention et une copie externe régulière avant croissance des données. Contrôler les échecs avec `systemctl status noema-backup.service` et `journalctl -u noema-backup.service`.
+Fixer `NOEMA_RELEASE` au commit des images dans le fichier `.env` du répertoire de release, hors Git. Faire pointer `/srv/noema/current` vers ce répertoire vérifié avant d'activer le timer. Les dumps ordinaires utilisent le rôle applicatif ; une restauration isolée utilise `noema_maintenance` et une base de test nommée explicitement.
 Configurer et tester le renouvellement du certificat et le rechargement Nginx.
 
 ## Retour arrière

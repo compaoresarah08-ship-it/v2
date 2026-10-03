@@ -1,0 +1,10 @@
+[Unit]
+Description=Back up NOEMA PostgreSQL and persistent media
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/noema/current
+ExecStart=/usr/bin/bash /srv/noema/current/deploy/backup.sh
+UMask=0077
