@@ -64,16 +64,17 @@ sudo python3 deploy/validate-env.py /etc/noema/app.env
 ## Construction et migration
 
 Ne pas lancer simultanément les deux constructions sur le KVM 1. Vérifier la mémoire libre, le disque et l'absence de charge publique pendant cette étape.
+Depuis la racine de la release, créer un fichier `.env` contenant `NOEMA_RELEASE=<commit exact des images>` (sans chevrons). Toujours passer explicitement `--env-file .env` : le fichier Compose se trouve dans un sous-répertoire et son chargement implicite peut ne pas trouver cette valeur.
 
 ```sh
-docker compose -f deploy/compose.yml build django
-docker compose -f deploy/compose.yml build web
-docker compose -f deploy/compose.yml up -d db
-docker compose -f deploy/compose.yml run --rm django python manage.py migrate --noinput
-docker compose -f deploy/compose.yml run --rm django python manage.py createcachetable django_cache
-docker compose -f deploy/compose.yml run --rm django python manage.py collectstatic --noinput
-docker compose -f deploy/compose.yml run --rm django python manage.py check --deploy
-docker compose -f deploy/compose.yml up -d django web proxy
+docker compose --env-file .env -f deploy/compose.yml build django
+docker compose --env-file .env -f deploy/compose.yml build web
+docker compose --env-file .env -f deploy/compose.yml up -d db
+docker compose --env-file .env -f deploy/compose.yml run --rm django python manage.py migrate --noinput
+docker compose --env-file .env -f deploy/compose.yml run --rm django python manage.py createcachetable django_cache
+docker compose --env-file .env -f deploy/compose.yml run --rm django python manage.py collectstatic --noinput
+docker compose --env-file .env -f deploy/compose.yml run --rm django python manage.py check --deploy
+docker compose --env-file .env -f deploy/compose.yml up -d django web proxy
 ```
 
 Ne pas générer de migrations sur le serveur. Créer l'administrateur Django dans un terminal interactif où l'utilisateur saisit lui-même son mot de passe.
@@ -91,7 +92,7 @@ Ne pas employer `--agree-tos` sans accord distinct. Ne pas contourner un avertis
 Installer le certificat sous `/etc/letsencrypt/live/laresidencenoema.com/`. Publier le proxy avec le fichier complémentaire uniquement quand ce certificat existe :
 
 ```sh
-docker compose -f deploy/compose.yml -f deploy/compose.public.yml up -d proxy
+docker compose --env-file .env -f deploy/compose.yml -f deploy/compose.public.yml up -d proxy
 ```
 
 Tester par résolution locale du domaine vers l'IP du VPS, sans modifier le DNS public : `curl --resolve` et/ou résolution locale de la machine de test. Garder Django/PostgreSQL inaccessibles de l'extérieur.
@@ -109,6 +110,7 @@ Recette nécessaire, avec données marquées `TEST NOEMA DEPLOIEMENT` :
 - suppression seulement des lignes, comptes et médias de test identifiés.
 
 Les tests automatiques locaux n'attestent ni de la délivrabilité SMTP, ni du fonctionnement OAuth réel, ni de la capacité de charge du KVM 1.
+Après remplacement du conteneur Express, attendre sa disponibilité et recharger Nginx (`docker exec noema-proxy-1 nginx -s reload`) pour qu'il résolve sa nouvelle adresse interne. Un démarrage de conteneur ne confirme pas encore que l'application répond.
 
 ## Sauvegarde WordPress et DNS
 
@@ -127,6 +129,16 @@ Après propagation : contrôler les serveurs DNS autoritatifs et plusieurs réso
 Compléter par une restauration de test et une copie hors VPS, avant de considérer la sauvegarde validée. Les unités `noema-backup.service` et `noema-backup.timer` exécutent le script quotidiennement à partir de `/srv/noema/current`. Le script refuse les exécutions simultanées et s'arrête si l'espace libre devient insuffisant. Il conserve toutes les sauvegardes ; prévoir une rétention et une copie externe régulière avant croissance des données. Contrôler les échecs avec `systemctl status noema-backup.service` et `journalctl -u noema-backup.service`.
 Fixer `NOEMA_RELEASE` au commit des images dans le fichier `.env` du répertoire de release, hors Git. Faire pointer `/srv/noema/current` vers ce répertoire vérifié avant d'activer le timer. Les dumps ordinaires utilisent le rôle applicatif ; une restauration isolée utilise `noema_maintenance` et une base de test nommée explicitement.
 Configurer et tester le renouvellement du certificat et le rechargement Nginx.
+
+Après propagation publique des deux noms vers le VPS, remplacer la validation DNS manuelle initiale par la validation webroot. Le certificat déjà émis reste en place pendant le test de reconfiguration :
+
+```sh
+sudo install -m 0755 deploy/renew-nginx.sh /etc/letsencrypt/renewal-hooks/deploy/noema-nginx
+sudo certbot reconfigure --cert-name laresidencenoema.com --authenticator webroot --webroot-path /srv/noema/acme --preferred-challenges http --non-interactive --run-deploy-hooks
+sudo systemctl enable --now certbot.timer
+```
+
+Ne considérer le renouvellement automatique opérationnel qu'après réussite du test de reconfiguration et confirmation du hook Nginx. Si Certbot demande de nouvelles conditions, laisser le propriétaire les examiner et les accepter lui-même.
 
 ## Retour arrière
 
