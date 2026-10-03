@@ -1,7 +1,7 @@
 # NOEMA — déploiement Hostinger
 
-Préparation basée sur `main`, commit `509652a6d58dc42929a373d18365c405df468831`.
-La version `8b43b866facfb9cf64e655154bec55acd35188c1`, issue de cette base, a été installée en recette privée le 3 octobre 2026. Elle n'est pas encore intégrée à `main` : ne pas confondre cette recette avec une publication finale.
+Déployer la branche `main` du dépôt choisi par le propriétaire : https://github.com/urielgroup2012-wq/Noema .
+Le code provient initialement de `AzizCompaore/Residence-Noema`, commit `509652a6d58dc42929a373d18365c405df468831`, avec les corrections de production conservées dans l'historique Git. L'ancien dépôt et son aperçu Render restent indépendants. Toujours enregistrer le commit exact du code et des images pour chaque release ; la présence de ces fichiers ne signifie pas que la recette publique ou la bascule DNS sont terminées.
 
 ## Architecture
 
