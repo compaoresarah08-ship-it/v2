@@ -18,7 +18,7 @@ Une erreur avant la bascule laisse la version précédente en ligne. Une erreur 
 
 - **Migrations de base** : arrêt avant bascule si `migrate --check` détecte une migration en attente. Un opérateur doit examiner sa compatibilité, sauvegarder la base, appliquer les migrations selon un plan adapté puis relancer le workflow. Le workflow ne promet pas un retour arrière sûr d'un changement de schéma.
 - **Échec des tests** : corriger, committer et pousser de nouveau. Les détails sont dans Actions.
-- **Quota GitHub Actions épuisé** : pas de modification de facturation ni d'achat automatique. Le déploiement reste bloqué jusqu'au rétablissement du quota ou à une intervention.
+- **Quota GitHub Actions** : les exécutions utilisent le quota existant du compte. Au-delà, le blocage ou une éventuelle facturation dépend des paramètres de dépenses du compte ; aucun moyen de paiement ni budget payant n'est ajouté par cette installation. Surveiller l'usage dans GitHub avant d'augmenter la fréquence des pushes.
 - **Disque libre inférieur à 10 Gio** : arrêt sans supprimer les données ou sauvegardes. Les sauvegardes et anciennes images doivent être entretenues par un opérateur.
 - **Clé révoquée ou serveur inaccessible** : contrôler l'accès sans désactiver la vérification de clé hôte SSH.
 

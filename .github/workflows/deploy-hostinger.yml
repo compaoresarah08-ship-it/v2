@@ -47,7 +47,7 @@ jobs:
         run: |
           cd backend
           python manage.py makemigrations --check --dry-run
-          python manage.py test apps.accounts apps.leads apps.faq --noinput
+          python manage.py test apps.accounts.tests apps.leads.tests apps.faq.tests --noinput
 
   deploy:
     needs: validate
