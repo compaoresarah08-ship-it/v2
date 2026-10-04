@@ -9,9 +9,9 @@ RUN npm run build
 FROM node:24-bookworm-slim
 ENV NODE_ENV=production PORT=3000
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY --chown=node:node package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
-COPY --from=build /app/frontend/dist ./frontend/dist
+COPY --from=build --chown=node:node /app/frontend/dist ./frontend/dist
 USER node
 EXPOSE 3000
 CMD ["node", "frontend/dist/server.cjs"]

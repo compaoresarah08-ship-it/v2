@@ -40,7 +40,9 @@ trap on_exit EXIT
 available_kb=$(df -Pk /srv/noema | awk 'END {print $4}')
 (( available_kb >= 10485760 )) || { echo 'Deployment blocked: keep at least 10 GiB available.' >&2; exit 1; }
 if [[ ! -d "$target" ]]; then
-    git -C /srv/noema/deploy.git worktree add --detach "$target" "$release"
+    # Source code must be readable by the non-root users inside the built images.
+    # Production environment files remain root-only, outside Git.
+    (umask 022; git -C /srv/noema/deploy.git worktree add --detach "$target" "$release")
 fi
 [[ $(git -C "$target" rev-parse HEAD) == "$release" ]] || exit 1
 cd "$target"
