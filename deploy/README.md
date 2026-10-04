@@ -149,3 +149,11 @@ Ne considérer le renouvellement automatique opérationnel qu'après réussite d
 5. Corriger le nouveau site hors trafic, puis refaire la recette avant une nouvelle bascule.
 
 Pour un retour arrière applicatif sur le VPS, réutiliser les images du commit précédent enregistré. Ne pas restaurer une ancienne base par-dessus des demandes clients nouvelles sans plan de conservation des données.
+
+## Référencement et informations publiques
+
+`seo.ts` définit les titres, descriptions, URL canoniques, données structurées, `robots.txt` et `sitemap.xml` du domaine `https://laresidencenoema.com`. Le sitemap contient l'accueil et les trois pages légales ; ne pas y ajouter les API, l'administration ou des URL de modales inexistantes. Les routes inconnues répondent 404. Les pages légales sont aussi rendues côté serveur avec le même composant React que dans le navigateur.
+
+Les coordonnées et durées figurent dans `frontend/src/components/LegalContent.tsx`. Elles ont été fournies par le propriétaire le 4 octobre 2026. Le numéro d'immatriculation n'est pas publié à sa demande. Cette page n'atteste pas à elle seule de la conformité juridique de l'entreprise. Les durées des dossiers commerciaux, factures et candidatures doivent être appliquées dans leur gestion et leurs archives ; cette modification n'installe pas de suppression automatique de ces dossiers. Seul le choix navigateur des cookies expire automatiquement après six mois.
+
+Après modification : `npm run lint`, `npm run build`, `node --import tsx --test tests/seo.test.ts`, puis `node --test tests/proxy.test.mjs`. Vérifier les pages légales en HTTP réel, leurs assets absolus, le sitemap et les données structurées après déploiement. L'ajout dans Search Console ne garantit ni une date d'indexation ni une position dans les résultats ; ne pas acheter de publicité ou de service SEO sans demande distincte.

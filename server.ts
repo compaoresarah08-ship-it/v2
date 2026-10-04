@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import { readFileSync } from 'fs';
+import { publicPages, renderPublicPage, robots, sitemap } from './seo';
 import { Readable } from 'stream';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
@@ -37,6 +39,9 @@ const DELIVERY_DATE_LABEL = ESTIMATED_DELIVERY_DATE.toLocaleDateString('fr-FR', 
   timeZone: 'UTC'
 });
 app.set('trust proxy', TRUST_PROXY_HOPS);
+app.use(['/admin', '/api'], (_req, res, next) => { res.setHeader('X-Robots-Tag', 'noindex, nofollow'); next(); });
+app.get('/robots.txt', (_req, res) => res.type('text/plain').send(robots));
+app.get('/sitemap.xml', (_req, res) => res.type('application/xml').send(sitemap()));
 
 function djangoHeaders(req: Request): Record<string, string> {
   const headers: Record<string, string> = {
@@ -1030,9 +1035,20 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'frontend', 'dist');
-    app.use(express.static(distPath));
+    const template = readFileSync(path.join(distPath, 'index.html'), 'utf8');
+    const htmlPages = Object.fromEntries(Object.keys(publicPages).map(page => [page, renderPublicPage(template, page as keyof typeof publicPages)]));
+    app.get('/index.html', (_req, res) => { res.redirect(301, '/'); });
+    app.use(['/server.cjs', '/server.cjs.map'], (_req, res) => { res.setHeader('X-Robots-Tag', 'noindex'); res.sendStatus(404); });
+    app.use(express.static(distPath, { index: false }));
     app.get('*', (req: Request, res: Response) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      const canonicalPath = req.path === '/' ? '/' : req.path.replace(/\/+$/, '') + '/';
+      if (Object.hasOwn(htmlPages, canonicalPath)) {
+        if (req.path !== canonicalPath) { res.redirect(301, canonicalPath + (req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '')); return; }
+        res.type('html').send(htmlPages[canonicalPath]);
+        return;
+      }
+      res.setHeader('X-Robots-Tag', 'noindex');
+      res.status(404).type('html').send('<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="robots" content="noindex"><title>Page introuvable | Résidence NOEMA</title><main><h1>Page introuvable</h1><p>Cette adresse ne correspond pas à une page du site.</p><a href="/">Retour à la Résidence NOEMA</a></main></html>');
     });
   }
 
