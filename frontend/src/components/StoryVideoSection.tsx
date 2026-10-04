@@ -18,8 +18,8 @@ export const StoryVideoSection: React.FC = () => {
             Le mot de Mme Bamba, promotrice du projet
           </h2>
 
-          <p className="text-base text-neutral-600 font-normal leading-relaxed">
-            Découvrez en vidéo le message de la promotrice de NOEMA ainsi que la présentation d'URIEL GROUP et de sa mission auprès de la diaspora — pour identifier le projet, la promotrice, et l'accompagnement à chaque étape.
+          <p className="text-sm sm:text-base text-neutral-600 font-normal leading-relaxed">
+            Découvrez le message de Mme Bamba, promotrice de NOEMA, et la mission d'URIEL GROUP auprès de la diaspora.
           </p>
         </div>
 
@@ -36,20 +36,20 @@ export const StoryVideoSection: React.FC = () => {
           <div className="absolute inset-0 bg-radial from-transparent via-black/40 to-black/80" />
 
           {/* Central Play Trigger Button */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white space-y-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pb-8 text-white space-y-2 sm:space-y-4 sm:pb-0">
             <button
               onClick={() => setIsVideoModalOpen(true)}
-              className="w-20 h-20 rounded-full bg-white text-neutral-950 flex items-center justify-center pl-1 shadow-2xl hover:scale-110 active:scale-95 transition-transform duration-300 group/play"
+              className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-white text-neutral-950 flex items-center justify-center pl-1 shadow-2xl hover:scale-110 active:scale-95 transition-transform duration-300 group/play"
               aria-label="Visionner le message de Mme Bamba"
             >
-              <Play className="w-8 h-8 fill-neutral-950 text-neutral-950" />
+              <Play className="w-6 h-6 sm:w-8 sm:h-8 fill-neutral-950 text-neutral-950" />
             </button>
-            <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-neutral-200">
-              Visionner le message de la promotrice
+            <span className="max-w-[82%] text-center text-[9px] leading-tight font-semibold tracking-wide uppercase text-neutral-100 sm:text-sm sm:leading-normal sm:tracking-wider sm:text-neutral-200">
+              Message de Mme Bamba, promotrice
             </span>
           </div>
 
-          <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-xs text-neutral-300">
+          <div className="absolute bottom-2 left-3 right-3 flex flex-col items-center gap-0.5 text-center text-[9px] leading-tight text-neutral-200 sm:bottom-6 sm:left-6 sm:right-6 sm:flex-row sm:justify-between sm:text-left sm:text-xs sm:text-neutral-300">
             <span>Mme Bamba • Uriel Group</span>
             <span>Angré Djorogobité, Abidjan — Côte d'Ivoire</span>
           </div>
