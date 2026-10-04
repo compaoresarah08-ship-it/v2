@@ -1,8 +1,7 @@
 name: Deploy frontend to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  # Historical static preview only. Production is deploy-hostinger.yml.
   workflow_dispatch:
 
 permissions:

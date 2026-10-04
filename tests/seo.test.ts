@@ -27,7 +27,8 @@ test('production serves crawlable legal pages, canonical URLs, sitemap and real 
   await new Promise<void>(resolve => probe.listen(0, '127.0.0.1', resolve));
   const port = (probe.address() as { port: number }).port;
   await new Promise<void>(resolve => probe.close(() => resolve()));
-  const child = spawn(process.execPath, ['frontend/dist/server.cjs'], { env: { ...process.env, NODE_ENV: 'production', PORT: String(port) }, stdio: ['ignore', 'ignore', 'pipe'] });
+  const revision = 'a'.repeat(40);
+  const child = spawn(process.execPath, ['frontend/dist/server.cjs'], { env: { ...process.env, NODE_ENV: 'production', PORT: String(port), NOEMA_RELEASE: revision }, stdio: ['ignore', 'ignore', 'pipe'] });
   let startupError = '';
   child.stderr.on('data', chunk => { startupError += String(chunk); });
   const base = `http://127.0.0.1:${port}`;
@@ -35,7 +36,9 @@ test('production serves crawlable legal pages, canonical URLs, sitemap and real 
     let ready = false;
     for (let i = 0; i < 120; i++) { if (child.exitCode !== null) break; try { if ((await fetch(base + '/')).ok) { ready = true; break; } } catch {} await delay(250); }
     assert.ok(ready, 'Express starts with the SSR legal components: ' + startupError);
-    const home = await (await fetch(base + '/')).text();
+    const homeResponse = await fetch(base + '/');
+    assert.equal(homeResponse.headers.get('x-noema-release'), revision);
+    const home = await homeResponse.text();
     assert.match(home, /rel="canonical" href="https:\/\/laresidencenoema.com\/"/);
     const structured = JSON.parse(home.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)![1]);
     assert.equal(structured['@graph'].find((node: any) => node['@type'] === 'ApartmentComplex').name, 'Résidence NOEMA');

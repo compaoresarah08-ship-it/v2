@@ -39,6 +39,11 @@ const DELIVERY_DATE_LABEL = ESTIMATED_DELIVERY_DATE.toLocaleDateString('fr-FR', 
   timeZone: 'UTC'
 });
 app.set('trust proxy', TRUST_PROXY_HOPS);
+// Allows deployment checks to identify the exact commit without exposing configuration.
+app.use((_req, res, next) => {
+  if (/^[0-9a-f]{40}$/.test(process.env.NOEMA_RELEASE || '')) res.setHeader('X-Noema-Release', process.env.NOEMA_RELEASE!);
+  next();
+});
 app.use(['/admin', '/api'], (_req, res, next) => { res.setHeader('X-Robots-Tag', 'noindex, nofollow'); next(); });
 app.get('/robots.txt', (_req, res) => res.type('text/plain').send(robots));
 app.get('/sitemap.xml', (_req, res) => res.type('application/xml').send(sitemap()));

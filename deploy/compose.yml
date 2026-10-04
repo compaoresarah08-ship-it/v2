@@ -56,6 +56,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      NOEMA_RELEASE: ${NOEMA_RELEASE:-local}
       PORT: '3000'
       DJANGO_API_URL: http://django:8000/api
       TRUST_PROXY_HOPS: '1'
