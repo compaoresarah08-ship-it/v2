@@ -24,7 +24,7 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-16 space-y-4 text-left">
+        <div className="max-w-3xl mb-10 space-y-4 text-left sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-neutral-200 text-neutral-800 text-xs font-semibold uppercase tracking-wider shadow-2xs">
             <HardHat className="w-3.5 h-3.5 text-neutral-700" />
             <span>Preuves & Transparence</span>
@@ -41,11 +41,11 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
         </div>
 
         {/* Construction Visual Hero Feature */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center mb-10 sm:mb-16">
           
           <div className="lg:col-span-7 relative rounded-2xl overflow-hidden bg-neutral-900 aspect-16/10 border border-neutral-200 shadow-md group">
             <img
-              src="./images/photo actuel du chantier.jpeg"
+              src="./images/Photo actuelle du chantier.jpeg"
               alt="Chantier réel de la Résidence NOEMA à Angré Djorogobité Abidjan"
               referrerPolicy="no-referrer"
               loading="lazy"
@@ -66,7 +66,7 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
             </div>
           </div>
 
-          <div className="lg:col-span-5 space-y-6 bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200/90 shadow-xs">
+          <div className="lg:col-span-5 space-y-4 sm:space-y-6 bg-white p-5 sm:p-8 rounded-2xl border border-neutral-200/90 shadow-xs">
             <div className="space-y-2">
               <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Contrôles & Sécurité</span>
               <h3 className="text-xl font-serif font-bold text-neutral-900">
@@ -96,12 +96,17 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
         </div>
 
         {/* Dynamic Timeline Steps */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <h3 className="text-xl font-serif font-bold text-neutral-900 border-b border-neutral-200 pb-3">
             Jalons & Planning Prévisionnel de Réalisation
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div
+            role="region"
+            aria-label="Étapes du planning de réalisation"
+            tabIndex={0}
+            className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 sm:snap-none md:grid-cols-3 lg:grid-cols-5"
+          >
             {timelineMilestones.map((m) => {
               const isDone = m.status === 'completed';
               const isInProgress = m.status === 'in_progress';
@@ -111,7 +116,7 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
               return (
                 <div
                   key={m.id}
-                  className={`p-5 rounded-2xl border transition-all flex flex-col justify-between space-y-4 ${
+                  className={`construction-timeline-card max-w-[340px] snap-start p-3 sm:w-auto sm:max-w-none sm:p-5 rounded-xl sm:rounded-2xl border transition-all flex flex-col justify-between space-y-3 sm:space-y-4 ${
                     isInProgress
                       ? 'bg-white border-emerald-400 shadow-md ring-2 ring-emerald-500/20'
                       : isDone && !isFirstMilestone
@@ -121,7 +126,7 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
                       : 'bg-white border-neutral-200/80 opacity-80'
                   }`}
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     <div className="flex items-center justify-between">
                       <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded ${isFirstMilestoneDone ? 'bg-white/20 text-white' : 'bg-neutral-100 text-neutral-800'}`}>
                         Étape 0{m.stage_number}
@@ -144,13 +149,13 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
                       {m.title}
                     </h4>
 
-                    <p className={`text-xs leading-relaxed line-clamp-3 ${isFirstMilestoneDone ? 'text-white/90' : 'text-neutral-500'}`}>
+                    <p className={`text-xs leading-relaxed line-clamp-2 sm:line-clamp-3 ${isFirstMilestoneDone ? 'text-white/90' : 'text-neutral-500'}`}>
                       {m.description}
                     </p>
                   </div>
 
                   {/* Progress Bar & Date */}
-                  <div className="space-y-2 pt-2 border-t border-neutral-100">
+                  <div className="space-y-1.5 sm:space-y-2 pt-2 border-t border-neutral-100">
                     <div className="flex justify-between text-[11px]">
                       <span className={`${isFirstMilestoneDone ? 'text-white/90' : 'text-neutral-500'} font-medium`}>{m.date_display}</span>
                       <span className={`font-mono font-bold ${isFirstMilestoneDone ? 'text-white' : 'text-neutral-900'}`}>{m.progress_percent}%</span>

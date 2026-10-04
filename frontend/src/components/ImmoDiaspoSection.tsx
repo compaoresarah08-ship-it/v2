@@ -20,9 +20,9 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
     <section id="financement-diaspora" className="py-20 lg:py-28 bg-[#FAFAFA] border-t border-neutral-200/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          <div className="lg:col-span-6 space-y-6 text-left">
+          <div className="lg:col-span-6 space-y-4 lg:space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-neutral-200 text-neutral-800 text-xs font-semibold uppercase tracking-wider shadow-2xs">
               <Globe className="w-3.5 h-3.5 text-emerald-700" />
               <span>Diaspora & International</span>
@@ -36,8 +36,8 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
               Vous n'avez pas besoin de disposer de 100 % du prix de votre appartement pour commencer votre projet. <strong>URIEL GROUP</strong> accompagne la diaspora dans l'étude et la structuration de son financement immobilier, en fonction de son profil.
             </p>
 
-            <div className="space-y-4 pt-2">
-              <div className="flex items-start gap-3 bg-white p-4 rounded-xl border border-neutral-200/80 shadow-2xs">
+            <div className="space-y-3 sm:space-y-4 pt-2">
+              <div className="flex items-start gap-3 bg-white p-3 sm:p-4 rounded-xl border border-neutral-200/80 shadow-2xs">
                 <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
                   <Landmark className="w-4 h-4" />
                 </div>
@@ -49,7 +49,7 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 bg-white p-4 rounded-xl border border-neutral-200/80 shadow-2xs">
+              <div className="flex items-start gap-3 bg-white p-3 sm:p-4 rounded-xl border border-neutral-200/80 shadow-2xs">
                 <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
                   <FileCheck className="w-4 h-4" />
                 </div>
@@ -61,7 +61,7 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 bg-white p-4 rounded-xl border border-neutral-200/80 shadow-2xs">
+              <div className="flex items-start gap-3 bg-white p-3 sm:p-4 rounded-xl border border-neutral-200/80 shadow-2xs">
                 <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
                   <Users className="w-4 h-4" />
                 </div>
@@ -87,7 +87,7 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
           </div>
 
           <div className="lg:col-span-6 relative">
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-neutral-200 shadow-md space-y-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-8 border border-neutral-200 shadow-md space-y-4 sm:space-y-6">
               <div className="border-b border-neutral-100 pb-4">
                 <span className="text-xs uppercase font-bold text-emerald-800 tracking-wider">Programme d'Accompagnement</span>
                 <h3 className="text-xl font-serif font-bold text-neutral-900 mt-1">
@@ -95,8 +95,8 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
                 </h3>
               </div>
 
-              <div className="space-y-4 text-xs">
-                <div className="flex gap-4 items-start">
+              <div className="space-y-3 sm:space-y-4 text-xs">
+                <div className="flex gap-3 sm:gap-4 items-start">
                   <span className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold font-mono shrink-0">
                     1
                   </span>
@@ -106,7 +106,7 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
                   </div>
                 </div>
 
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-3 sm:gap-4 items-start">
                   <span className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold font-mono shrink-0">
                     2
                   </span>
@@ -116,7 +116,7 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
                   </div>
                 </div>
 
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-3 sm:gap-4 items-start">
                   <span className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold font-mono shrink-0">
                     3
                   </span>
@@ -126,7 +126,7 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
                   </div>
                 </div>
 
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-3 sm:gap-4 items-start">
                   <span className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold font-mono shrink-0">
                     4
                   </span>
@@ -149,8 +149,8 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
         </div>
 
         {/* Devenir propriétaire à Abidjan depuis l'étranger — parcours client en 7 étapes (brief diaspora) */}
-        <div className="mt-16 pt-16 border-t border-neutral-200/80">
-          <div className="max-w-2xl mb-10">
+        <div className="mt-8 pt-8 sm:mt-16 sm:pt-16 border-t border-neutral-200/80">
+          <div className="max-w-2xl mb-7 sm:mb-10">
             <h3 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 leading-tight">
               Devenir propriétaire à Abidjan depuis l'étranger
             </h3>
@@ -159,13 +159,13 @@ export const ImmoDiaspoSection: React.FC<ImmoDiaspoSectionProps> = ({ onOpenSimu
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-4">
             {remoteJourneySteps.map((step, index) => {
               const Icon = step.icon;
               return (
-                <div key={step.title} className="bg-white rounded-xl p-4 border border-neutral-200/80 flex flex-col gap-3">
+                <div key={step.title} className="bg-white rounded-xl p-2.5 sm:p-4 border border-neutral-200/80 flex flex-col gap-2 sm:gap-3">
                   <div className="flex items-center justify-between">
-                    <span className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold font-mono text-xs shrink-0">
+                    <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold font-mono text-[11px] sm:text-xs shrink-0">
                       {index + 1}
                     </span>
                     <Icon className="w-4 h-4 text-emerald-700" />

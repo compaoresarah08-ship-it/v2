@@ -36,7 +36,7 @@ export const LocationSection: React.FC = () => {
     <section id="localisation" className="py-20 lg:py-28 bg-[#FAFAFA] border-t border-neutral-200/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="max-w-3xl mb-16 space-y-4 text-left">
+        <div className="max-w-3xl mb-10 space-y-4 text-left sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-neutral-200 text-neutral-800 text-xs font-semibold uppercase tracking-wider shadow-2xs">
             <MapPin className="w-3.5 h-3.5 text-emerald-700" />
             <span>Abidjan • Cocody</span>
@@ -52,17 +52,17 @@ export const LocationSection: React.FC = () => {
         </div>
 
         {/* Map & POI Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch">
           
           <div className="lg:col-span-6 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-md">
-            <div className="flex items-center justify-between gap-4 border-b border-neutral-200 px-5 py-4">
+            <div className="flex items-center justify-between gap-4 border-b border-neutral-200 px-4 py-3 sm:px-5 sm:py-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">Localisation exacte</p>
                 <h3 className="mt-1 font-serif text-xl font-bold text-neutral-900">Résidence NOEMA, Angré Djorogobité</h3>
               </div>
               <span className="shrink-0 text-xs font-semibold text-emerald-800">Carte du quartier</span>
             </div>
-            <iframe title="Carte de localisation de la Résidence NOEMA" src={mapEmbedUrl} className="h-[500px] w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            <iframe title="Carte de localisation de la Résidence NOEMA" src={mapEmbedUrl} className="h-[320px] w-full border-0 sm:h-[400px] lg:h-[500px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             <div className="flex items-center gap-2 bg-neutral-50 px-5 py-3 text-xs text-neutral-600">
               <MapPin className="h-4 w-4 shrink-0 text-emerald-700" />
               <span>Coordonnées vérifiées : 5°23'59.3&quot;N, 3°56'36.8&quot;W</span>
@@ -74,7 +74,7 @@ export const LocationSection: React.FC = () => {
             {pointsOfInterest.map((group, idx) => {
               const Icon = group.icon;
               return (
-                <div key={idx} className="bg-white rounded-2xl p-6 border border-neutral-200/90 shadow-2xs space-y-3">
+                <div key={idx} className="bg-white rounded-2xl p-4 sm:p-6 border border-neutral-200/90 shadow-2xs space-y-2 sm:space-y-3">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
                       <Icon className="w-4 h-4" />
@@ -82,9 +82,9 @@ export const LocationSection: React.FC = () => {
                     <h4 className="text-sm font-bold text-neutral-900 uppercase tracking-wider">{group.category}</h4>
                   </div>
 
-                  <div className="space-y-2 pt-1">
+                  <div className="space-y-1.5 pt-1 sm:space-y-2">
                     {group.items.map((item, i) => (
-                      <div key={i} className="flex items-center justify-between gap-4 text-xs py-1.5 border-b border-neutral-50 last:border-0">
+                      <div key={i} className="flex items-center justify-between gap-4 text-xs py-1 border-b border-neutral-50 last:border-0 sm:py-1.5">
                         <span className="text-neutral-700 font-medium">{item.name}</span>
                         <span className="shrink-0 rounded-md bg-emerald-50 px-2 py-0.5 font-mono font-bold text-emerald-700">{item.distance}</span>
                       </div>

@@ -46,7 +46,7 @@ export const ApartmentsSection: React.FC<ApartmentsSectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 sm:mb-12 sm:gap-6">
           <div className="space-y-3 max-w-2xl text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-neutral-200 text-neutral-800 text-xs font-semibold uppercase tracking-wider shadow-2xs">
               <Building2 className="w-3.5 h-3.5 text-neutral-600" />
@@ -100,7 +100,7 @@ export const ApartmentsSection: React.FC<ApartmentsSectionProps> = ({
         </div>
 
         {/* Apartments Cards Grid */}
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-5 sm:gap-8 md:grid-cols-2">
           {filteredApartments.map((apartment) => {
             const status = statusConfig[apartment.status] || statusConfig.available;
             const heroPhoto = apartmentImageSources(apartment.type, apartment.photos || [])[0];
@@ -113,7 +113,7 @@ export const ApartmentsSection: React.FC<ApartmentsSectionProps> = ({
                 className="bg-white rounded-2xl border border-neutral-200/90 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group"
               >
                 {/* Photo & Status Badge */}
-                <div className="relative aspect-16/10 overflow-hidden bg-neutral-100 cursor-pointer" onClick={() => onSelectApartment(apartment)}>
+                <div className="relative aspect-[16/9] md:aspect-16/10 overflow-hidden bg-neutral-100 cursor-pointer" onClick={() => onSelectApartment(apartment)}>
                   <img
                     src={heroPhoto}
                     onError={(event) => {
@@ -148,9 +148,9 @@ export const ApartmentsSection: React.FC<ApartmentsSectionProps> = ({
                 </div>
 
                 {/* Card Content Body */}
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-6">
+                <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between space-y-4 sm:space-y-6">
                   
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     <h3 
                       className="text-lg font-serif font-bold text-neutral-900 group-hover:text-emerald-800 transition-colors cursor-pointer"
                       onClick={() => onSelectApartment(apartment)}
@@ -186,7 +186,7 @@ export const ApartmentsSection: React.FC<ApartmentsSectionProps> = ({
                   </div>
 
                   {/* Price Section & Actions */}
-                  <div className="space-y-4 pt-2 border-t border-neutral-100">
+                  <div className="space-y-3 sm:space-y-4 pt-2 border-t border-neutral-100">
                     
                     <div className="flex items-baseline justify-between">
                       <div>

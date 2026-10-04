@@ -202,6 +202,8 @@ img {
 
 @media (max-width: 639px) {
 	#hero { min-height: auto; padding-top: 7.25rem; padding-bottom: 3.5rem; }
+	main > .scroll-reveal > section { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+	.construction-timeline-card { flex: 0 0 88% !important; width: 88% !important; min-width: 88% !important; }
 	#hero .hero-orbit { display: none; }
 	#hero h1 { font-size: clamp(2.35rem, 13vw, 3.4rem); }
 	#hero .hero-float { display: none; }

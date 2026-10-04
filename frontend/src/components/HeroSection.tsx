@@ -48,10 +48,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute inset-0 bg-[radial-gradient(#E5E7EB_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           
           {/* Left Column: Editorial Value Proposition & CTAs */}
-          <div className="lg:col-span-7 space-y-7 text-left">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-7 text-left">
             
             {/* Real Estate Program Verified Badge */}
             <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200/90 shadow-xs text-xs font-semibold text-neutral-800">
@@ -152,7 +152,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <div className="relative rounded-2xl bg-white p-3 sm:p-4 shadow-xl border border-neutral-200/90 transition-all duration-500 group-hover:shadow-2xl" style={{ transform: `perspective(1200px) rotateX(${heroTilt.x}deg) rotateY(${heroTilt.y}deg) translateY(${scrollOffset * 0.35}px)`, transformStyle: 'preserve-3d' }}>
                 
                 {/* Image Container with precise aspect ratio matching real building */}
-                <div className="relative rounded-xl overflow-hidden bg-neutral-100 aspect-3/4 max-h-[580px]">
+                <div className="relative rounded-xl overflow-hidden bg-neutral-100 aspect-[4/3] sm:aspect-3/4 max-h-[320px] sm:max-h-[580px]">
                   <img
                     id="hero-facade-image"
                     src="./images/noema-facade.webp"

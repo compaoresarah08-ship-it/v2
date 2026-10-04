@@ -31,63 +31,76 @@ export const Footer: React.FC<FooterProps> = ({
     <footer id="main-footer" className="border-t border-[#e5c9b1] bg-[#fdfaf4] text-neutral-700 text-xs">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
 
-        <div className="relative mb-14 grid overflow-hidden rounded-[2rem] border border-white/70 bg-[#fffdf9] text-neutral-900 shadow-[0_24px_70px_rgba(91,58,46,0.12)] lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
+        <div className="relative mb-10 grid overflow-hidden rounded-2xl border border-white/70 bg-[#fffdf9] text-neutral-900 shadow-[0_16px_44px_rgba(91,58,46,0.1)] lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="relative min-h-[190px] overflow-hidden sm:min-h-[230px]">
             <img
-              src="./images/famille souriante.webp"
-              alt="Famille souriante dans son intérieur"
+              src="./images/image footer.jpeg"
+              alt="Un couple reçoit les clés de son logement"
               loading="lazy"
               decoding="async"
               className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d15a3a] backdrop-blur-sm sm:left-8 sm:top-8">
-              L'esprit NOEMA
+              Un projet de confiance
             </div>
           </div>
 
-          <div className="flex flex-col justify-between bg-[#fffdf9] px-6 py-8 sm:px-10 sm:py-10">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#d15a3a]">
+          <div className="flex flex-col justify-center bg-[#fffdf9] px-6 py-6 sm:px-8 sm:py-7">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d15a3a]">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Un lieu pour vivre</span>
+                <span>Un financement bancaire à 100 %</span>
               </div>
-              <h2 className="max-w-md font-serif text-3xl font-bold leading-[1.08] sm:text-4xl">Des moments heureux commencent chez soi.</h2>
-              <p className="max-w-md text-sm leading-relaxed text-neutral-600">À NOEMA, nous imaginons une résidence où les familles se retrouvent, grandissent et profitent pleinement de leur quotidien.</p>
+              <h2 className="max-w-2xl font-serif text-2xl font-bold leading-tight sm:text-3xl">La Résidence NOEMA est déjà financée à 100 % par la banque</h2>
+              <p className="max-w-2xl text-sm leading-relaxed text-neutral-600">Ce financement témoigne de la confiance accordée au projet par ses partenaires bancaires.</p>
             </div>
 
-            <div className="mt-8 space-y-5">
-              <div className="flex items-center gap-5 border-y border-neutral-200 py-4 text-[11px] font-semibold text-neutral-700">
+            <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4 text-[11px] font-semibold text-neutral-700">
                 <span><strong className="mr-1 text-[#d15a3a]">T2</strong> &amp; <strong className="ml-1 text-[#d15a3a]">T3</strong></span>
                 <span className="h-1 w-1 rounded-full bg-[#dc8366]" />
                 <span>Angré, Abidjan</span>
               </div>
               <button
                 onClick={onOpenVisioAppointment}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#dc8366] px-5 py-3.5 text-xs font-bold text-white shadow-lg shadow-[#dc8366]/20 transition-all hover:bg-[#dc6044] hover:shadow-xl active:scale-95"
+                className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-[#dc8366] px-5 py-3 text-xs font-bold text-white shadow-md shadow-[#dc8366]/20 transition-all hover:bg-[#dc6044] hover:shadow-lg active:scale-95 sm:self-auto"
               >
-                Prendre rendez-vous en visio
+                Échanger avec un conseiller
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
         </div>
+
+        <section aria-labelledby="footer-partners-title" className="mb-12 border-b border-[#5b3a2e]/15 pb-10">
+          <h2 id="footer-partners-title" className="mb-6 text-center font-serif text-sm font-bold uppercase tracking-wider text-neutral-900">
+            Nos partenaires
+          </h2>
+          <div className="grid grid-cols-2 items-center gap-6 sm:grid-cols-4">
+            <img src="./images/partenaire%20(1).jpeg" alt="APAVE" loading="lazy" decoding="async" className="mx-auto h-16 w-full max-w-48 object-contain" />
+            <img src="./images/partenaire%20(1).png" alt="OpenBoxci Design, architectes" loading="lazy" decoding="async" className="mx-auto h-16 w-full max-w-48 object-contain" />
+            <img src="./images/partenaire%20(2).jpeg" alt="AGTS" loading="lazy" decoding="async" className="mx-auto h-16 w-full max-w-48 object-contain" />
+            <img src="./images/partenaire%20(2).png" alt="Cabinet Archi Mage" loading="lazy" decoding="async" className="mx-auto h-16 w-full max-w-48 object-contain" />
+          </div>
+        </section>
         
         <div className="grid grid-cols-1 gap-10 border-b border-[#5b3a2e]/15 pb-12 md:grid-cols-2 lg:grid-cols-12">
           
-          {/* Brand Col */}
+          {/* Promoter Col */}
           <div className="lg:col-span-4 space-y-4 text-left">
             <div className="flex items-center gap-3">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-black shadow-lg shadow-[#5b3a2e]/20 ring-2 ring-[#c48f5f]/50">
-                <img src="./images/LOGO PROMOTTRICE.jpg" alt="Logo Méniger-Bamba Construction et Immobilier" className="h-full w-full object-contain" />
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#c48f5f]/50 bg-black p-1 shadow-lg shadow-[#5b3a2e]/20">
+                <img src="./images/LOGO%20DU%20PROMOTTEUR.jpg" alt="Logo de Méniger-Bamba Construction et Immobilier, promoteur de la Résidence NOEMA" className="h-full w-full object-contain" />
               </div>
-              <span className="font-serif text-lg font-bold tracking-[0.18em] text-neutral-900 uppercase">
-                RÉSIDENCE NOEMA
-              </span>
+              <div>
+                <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-[#d15a3a]">Le promoteur</span>
+                <span className="mt-1 block font-serif text-lg font-bold leading-tight text-neutral-900">Méniger-Bamba</span>
+                <span className="block text-[11px] text-neutral-600">Construction et Immobilier</span>
+              </div>
             </div>
 
             <p className="max-w-sm leading-relaxed text-neutral-600">
-              Un programme immobilier résidentiel d'exception R+7 situé à Angré Djorogobité, Abidjan.
-              Conçu et développé avec l'exigence architecturale d'Uriel Group et l'expertise diaspora d'ImmoDiaspo.
+              Méniger-Bamba Construction et Immobilier est le promoteur de la Résidence NOEMA, un programme résidentiel R+7 à Angré Djorogobité, Abidjan.
             </p>
 
             <div className="flex items-center gap-3 pt-2 text-[11px] text-neutral-500">

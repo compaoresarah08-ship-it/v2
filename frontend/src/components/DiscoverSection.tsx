@@ -41,7 +41,7 @@ export const DiscoverSection: React.FC<DiscoverSectionProps> = () => {
     <section id="decouvrir" className="py-20 lg:py-28 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Galerie conservée : hall, piscine, circulations et parking. */}
-        <div className="mt-16 border-t border-neutral-200/80 pt-12">
+        <div className="mt-8 border-t border-neutral-200/80 pt-8 sm:mt-16 sm:pt-12">
           <div className="max-w-3xl mb-8 space-y-3">
             <span className="text-xs uppercase font-bold tracking-widest text-emerald-800">Espaces communs</span>
             <h3 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900">Hall, piscine et parking</h3>
@@ -56,7 +56,7 @@ export const DiscoverSection: React.FC<DiscoverSectionProps> = () => {
             onMouseLeave={() => setIsGalleryHovered(false)}
           >
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_250px] gap-5 p-3 sm:p-4 items-stretch">
-            <div className="relative min-h-[380px] sm:min-h-[520px] overflow-hidden rounded-xl bg-neutral-900">
+            <div className="relative min-h-[300px] sm:min-h-[520px] overflow-hidden rounded-xl bg-neutral-900">
               <img
                 key={activeImage.file}
                 src={commonAreaImageUrl(activeImage.file)}

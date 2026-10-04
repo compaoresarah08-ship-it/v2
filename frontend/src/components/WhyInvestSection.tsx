@@ -33,7 +33,7 @@ export const WhyInvestSection: React.FC = () => {
     <section id="pourquoi-investir" className="py-20 lg:py-28 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="max-w-3xl mb-16 space-y-4 text-left">
+        <div className="max-w-3xl mb-10 space-y-4 text-left sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 text-neutral-800 text-xs font-semibold uppercase tracking-wider">
             <TrendingUp className="w-3.5 h-3.5 text-neutral-700" />
             <span>Valeur Patrimoniale</span>
@@ -49,21 +49,21 @@ export const WhyInvestSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 sm:gap-8">
           {reasons.map((r, idx) => {
             const Icon = r.icon;
             return (
               <div 
                 key={idx}
-                className="bg-[#FAFAFA] rounded-2xl p-8 border border-neutral-200/80 hover:border-neutral-300 hover:shadow-md transition-all space-y-4"
+                className="bg-[#FAFAFA] rounded-xl sm:rounded-2xl p-3.5 sm:p-8 border border-neutral-200/80 hover:border-neutral-300 hover:shadow-md transition-all space-y-2.5 sm:space-y-4"
               >
-                <div className="w-12 h-12 rounded-xl bg-white border border-neutral-200 flex items-center justify-center text-neutral-900 shadow-2xs">
-                  <Icon className="w-6 h-6 text-emerald-700" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border border-neutral-200 flex items-center justify-center text-neutral-900 shadow-2xs">
+                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-700" />
                 </div>
 
                 <div className="space-y-1">
                   <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">{r.subtitle}</span>
-                  <h3 className="text-xl font-serif font-bold text-neutral-900">{r.title}</h3>
+                  <h3 className="break-words text-base sm:text-xl font-serif font-bold text-neutral-900">{r.title}</h3>
                 </div>
 
                 <p className="text-sm text-neutral-600 leading-relaxed">
