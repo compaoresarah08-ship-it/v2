@@ -147,9 +147,10 @@ app.use('/api/auth', async (req: Request, res: Response) => {
   }
 });
 
-async function getDjangoCollection<T>(resource: string, req: Request): Promise<T[] | null> {
+async function getDjangoCollection<T>(resource: string, req: Request, query?: URLSearchParams): Promise<T[] | null> {
   try {
-    const response = await fetch(`${DJANGO_API_URL}/${resource}/`, {
+    const queryString = query?.toString();
+    const response = await fetch(`${DJANGO_API_URL}/${resource}/${queryString ? `?${queryString}` : ''}`, {
       headers: djangoHeaders(req), redirect: 'manual', signal: AbortSignal.timeout(15000),
     });
     if (!response.ok) return null;
@@ -485,7 +486,8 @@ app.get('/api/residence', async (req: Request, res: Response) => {
 // 2. Apartments List & Filters
 app.get('/api/apartments', async (req: Request, res: Response) => {
   const { type, status } = req.query;
-  const djangoApartments = await getDjangoCollection<any>('apartments', req);
+  const publicQuery = req.query.public === 'true' ? new URLSearchParams({ public: 'true' }) : undefined;
+  const djangoApartments = await getDjangoCollection<any>('apartments', req, publicQuery);
   const publishedApartments: Apartment[] = djangoApartments?.length ? djangoApartments.map((apartment) => ({
     id: String(apartment.id),
     ref: apartment.reference,
@@ -536,7 +538,8 @@ app.get('/api/apartments', async (req: Request, res: Response) => {
 
 // 3. Single Apartment by ID
 app.get('/api/apartments/:id', async (req: Request, res: Response) => {
-  const djangoApartments = await getDjangoCollection<any>('apartments', req);
+  const publicQuery = req.query.public === 'true' ? new URLSearchParams({ public: 'true' }) : undefined;
+  const djangoApartments = await getDjangoCollection<any>('apartments', req, publicQuery);
   const publishedApartments: Apartment[] = djangoApartments?.length ? djangoApartments.map((apartment) => ({
     id: String(apartment.id), ref: apartment.reference, name: apartment.name, type: apartment.apartment_type,
     commercial_segment: apartment.commercial_segment, is_public: apartment.is_public,

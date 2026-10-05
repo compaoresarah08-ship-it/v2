@@ -66,6 +66,9 @@ test('production Express preserves HTTPS, CSRF and persistent appointment IDs', 
       const response = await request(base + path, { headers });
       assert.equal(response.status, 200, path);
     }
+    const publicApartments = await request(base + '/api/apartments?public=true', { headers });
+    assert.equal(publicApartments.status, 200);
+    assert.ok(received.some(({ path }) => path === '/api/apartments/?public=true'), 'public apartment mode reaches Django');
     const admin = await request(base + '/admin/', { headers });
     assert.equal(admin.status, 302);
     assert.equal(admin.headers.location, '/admin/login/');

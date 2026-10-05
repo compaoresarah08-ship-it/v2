@@ -99,6 +99,7 @@ export async function fetchApartments(type?: string, status?: string): Promise<A
   const params = new URLSearchParams();
   if (type && type !== 'all') params.append('type', type);
   if (status && status !== 'all') params.append('status', status);
+  params.set('public', 'true');
 
   const res = await fetch(`${API_BASE}/apartments?${params.toString()}`);
   if (!res.ok) throw new Error('Apartments API unavailable');
@@ -107,7 +108,7 @@ export async function fetchApartments(type?: string, status?: string): Promise<A
 }
 
 export async function fetchApartmentById(id: string): Promise<Apartment> {
-  const res = await fetch(`${API_BASE}/apartments/${id}`);
+  const res = await fetch(`${API_BASE}/apartments/${id}?public=true`);
   if (!res.ok) throw new Error('Apartment detail API unavailable');
   const data = await res.json();
   return data.data;
