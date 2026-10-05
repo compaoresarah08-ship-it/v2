@@ -18,6 +18,7 @@ function request(url, options = {}) {
 
 test('production Express preserves HTTPS, CSRF and persistent appointment IDs', async () => {
   const received = [];
+  let returnEmptyApartments = false;
   const backend = createServer(async (req, res) => {
     let body = '';
     for await (const chunk of req) body += chunk;
@@ -32,6 +33,14 @@ test('production Express preserves HTTPS, CSRF and persistent appointment IDs', 
     if (req.url === '/api/leads/appointment-notification/') {
       res.statusCode = 201;
       return res.end(JSON.stringify({ success: true, data: { lead_id: 123, pipeline_stage: 'meeting_scheduled' } }));
+    }
+    if (req.url === '/api/apartments/?public=true') {
+      if (returnEmptyApartments) return res.end(JSON.stringify([]));
+      return res.end(JSON.stringify([
+        { id: 1, reference: 'NOEMA-T2-01', name: 'T2', apartment_type: 't2', is_public: true, status: 'available', display_order: 1 },
+        { id: 2, reference: 'NOEMA-PH-T2-01', name: 'Penthouse', apartment_type: 't2', is_public: true, status: 'reserved', display_order: 2 },
+        { id: 3, reference: 'NOEMA-INTERNAL-01', name: 'Interne', apartment_type: 't2', is_public: false, status: 'available', display_order: 3 },
+      ]));
     }
     if (req.method === 'POST') res.statusCode = 201;
     res.end(JSON.stringify([]));
@@ -69,6 +78,14 @@ test('production Express preserves HTTPS, CSRF and persistent appointment IDs', 
     const publicApartments = await request(base + '/api/apartments?public=true', { headers });
     assert.equal(publicApartments.status, 200);
     assert.ok(received.some(({ path }) => path === '/api/apartments/?public=true'), 'public apartment mode reaches Django');
+    const publicApartmentData = await publicApartments.json();
+    assert.equal(publicApartmentData.count, 1);
+    assert.equal(publicApartmentData.data[0].ref, 'NOEMA-T2-01');
+    const reservedDetail = await request(base + '/api/apartments/NOEMA-PH-T2-01?public=true', { headers });
+    assert.equal(reservedDetail.status, 404);
+    returnEmptyApartments = true;
+    const emptyApartments = await request(base + '/api/apartments?public=true', { headers });
+    assert.equal((await emptyApartments.json()).count, 0, 'an empty Django result does not reveal stale fallback apartments');
     const admin = await request(base + '/admin/', { headers });
     assert.equal(admin.status, 302);
     assert.equal(admin.headers.location, '/admin/login/');

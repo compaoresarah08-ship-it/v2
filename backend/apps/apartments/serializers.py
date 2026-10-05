@@ -20,6 +20,7 @@ class ApartmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         is_staff = self.request.user.is_authenticated and self.request.user.is_staff
-        if self.request.query_params.get('public') == 'true' or not is_staff:
-            queryset = queryset.filter(is_public=True)
+        public_view = self.request.query_params.get('public') == 'true' or not is_staff
+        if public_view:
+            queryset = queryset.filter(is_public=True, status='available')
         return queryset

@@ -5,7 +5,12 @@ from .models import Apartment
 
 
 class ApartmentPublicApiTests(APITestCase):
-    def test_public_listing_hides_internal_apartments_from_staff_sessions(self):
+    def test_public_listing_only_returns_available_apartments_for_staff_sessions(self):
+        reserved_public_apartment = Apartment.objects.filter(is_public=True).first()
+        self.assertIsNotNone(reserved_public_apartment)
+        reserved_public_apartment.status = 'reserved'
+        reserved_public_apartment.save()
+
         staff_user = get_user_model().objects.create_user(
             username='crm@example.com',
             password='NoemaSecurePassword!2026',
@@ -17,8 +22,19 @@ class ApartmentPublicApiTests(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Apartment.objects.filter(is_public=False).exists())
-        self.assertTrue(all(apartment['is_public'] for apartment in response.data))
+        self.assertTrue(all(
+            apartment['is_public'] and apartment['status'] == 'available'
+            for apartment in response.data
+        ))
 
         crm_response = self.client.get('/api/apartments/')
 
         self.assertTrue(any(not apartment['is_public'] for apartment in crm_response.data))
+        self.assertTrue(any(
+            apartment['is_public'] and apartment['status'] == 'reserved'
+            for apartment in crm_response.data
+        ))
+
+        self.client.force_authenticate(user=None)
+        anonymous_response = self.client.get('/api/apartments/')
+        self.assertTrue(all(apartment['status'] == 'available' for apartment in anonymous_response.data))

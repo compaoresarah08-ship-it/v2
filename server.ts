@@ -486,9 +486,8 @@ app.get('/api/residence', async (req: Request, res: Response) => {
 // 2. Apartments List & Filters
 app.get('/api/apartments', async (req: Request, res: Response) => {
   const { type, status } = req.query;
-  const publicQuery = req.query.public === 'true' ? new URLSearchParams({ public: 'true' }) : undefined;
-  const djangoApartments = await getDjangoCollection<any>('apartments', req, publicQuery);
-  const publishedApartments: Apartment[] = djangoApartments?.length ? djangoApartments.map((apartment) => ({
+  const djangoApartments = await getDjangoCollection<any>('apartments', req, new URLSearchParams({ public: 'true' }));
+  const publishedApartments: Apartment[] = djangoApartments === null ? apartmentsData : djangoApartments.map((apartment) => ({
     id: String(apartment.id),
     ref: apartment.reference,
     name: apartment.name,
@@ -516,8 +515,8 @@ app.get('/api/apartments', async (req: Request, res: Response) => {
     floor_plan_image: apartment.floor_plan_image || undefined,
     display_order: apartment.display_order,
     is_featured: apartment.is_featured
-  })) : apartmentsData;
-  let filtered = [...publishedApartments];
+  }));
+  let filtered = publishedApartments.filter(apartment => apartment.is_public !== false && apartment.status === 'available');
 
   if (type && type !== 'all') {
     filtered = filtered.filter(a => a.type === type);
@@ -538,9 +537,8 @@ app.get('/api/apartments', async (req: Request, res: Response) => {
 
 // 3. Single Apartment by ID
 app.get('/api/apartments/:id', async (req: Request, res: Response) => {
-  const publicQuery = req.query.public === 'true' ? new URLSearchParams({ public: 'true' }) : undefined;
-  const djangoApartments = await getDjangoCollection<any>('apartments', req, publicQuery);
-  const publishedApartments: Apartment[] = djangoApartments?.length ? djangoApartments.map((apartment) => ({
+  const djangoApartments = await getDjangoCollection<any>('apartments', req, new URLSearchParams({ public: 'true' }));
+  const publishedApartments: Apartment[] = djangoApartments === null ? apartmentsData : djangoApartments.map((apartment) => ({
     id: String(apartment.id), ref: apartment.reference, name: apartment.name, type: apartment.apartment_type,
     commercial_segment: apartment.commercial_segment, is_public: apartment.is_public,
     rooms_count: apartment.rooms_count, bedrooms_count: apartment.bedrooms_count, bathrooms_count: apartment.bathrooms_count,
@@ -554,8 +552,12 @@ app.get('/api/apartments/:id', async (req: Request, res: Response) => {
     composition: apartment.composition || [], parking_notes: apartment.parking_notes || '',
     orientation_notes: apartment.orientation_notes || '', view_notes: apartment.view_notes || '',
     display_order: apartment.display_order, is_featured: apartment.is_featured
-  })) : apartmentsData;
-  const apartment = publishedApartments.find(a => a.id === req.params.id || a.ref === req.params.id);
+  }));
+  const apartment = publishedApartments.find(a =>
+    a.status === 'available'
+    && a.is_public !== false
+    && (a.id === req.params.id || a.ref === req.params.id)
+  );
   if (!apartment) {
     res.status(404).json({ success: false, error: 'Appartement non trouvé' });
     return;
