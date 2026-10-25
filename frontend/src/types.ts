@@ -77,6 +77,12 @@ export interface ConstructionMilestone {
   video_url?: string;
 }
 
+export interface ConstructionShowcase {
+  title: string;
+  caption: string;
+  photo?: string;
+}
+
 export interface FAQItem {
   id: string;
   category: 'projet' | 'financement' | 'diaspora' | 'reservation' | 'chantier';

@@ -1,9 +1,11 @@
 from unittest.mock import patch
 
+from django.contrib import admin
 from django.core import mail
 from django.core.cache import cache
 from django.test import TestCase, override_settings
 
+from .admin import LeadAdmin
 from .models import Lead
 
 
@@ -62,3 +64,44 @@ class LeadDeliveryTests(TestCase):
         response = self.client.post('/api/leads/', self.contact, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Lead.objects.filter(pk=response.json()['data']['id']).exists())
+
+
+class LeadAdminSimulationSummaryTests(TestCase):
+    def setUp(self):
+        self.lead_admin = LeadAdmin(Lead, admin.site)
+
+    def test_simulation_is_presented_with_labels_and_formatted_values(self):
+        lead = Lead(
+            first_name="Test",
+            last_name="Prospect",
+            phone_whatsapp="+225000000001",
+            email="simulation-test@example.com",
+            residence_country="Côte d'Ivoire",
+            simulation_data={
+                "loan_amount": 53100323,
+                "interest_rate": 8,
+                "rental_owner_income": 629718.72,
+                "is_debt_ratio_healthy": True,
+            },
+        )
+
+        summary = str(self.lead_admin.simulation_summary(lead))
+
+        self.assertIn("Financement", summary)
+        self.assertIn("Montant à financer", summary)
+        self.assertIn("53 100 323 FCFA", summary)
+        self.assertIn("Taux annuel", summary)
+        self.assertIn("8 %", summary)
+        self.assertIn("Revenus locatifs", summary)
+        self.assertIn("629 719 FCFA", summary)
+        self.assertIn("Oui", summary)
+        self.assertNotIn("loan_amount", summary)
+
+    def test_empty_or_invalid_simulation_displays_a_clear_message(self):
+        for simulation_data in ({}, [], None):
+            with self.subTest(simulation_data=simulation_data):
+                lead = Lead(simulation_data=simulation_data)
+                self.assertEqual(
+                    self.lead_admin.simulation_summary(lead),
+                    "Aucune donnée de simulation enregistrée.",
+                )

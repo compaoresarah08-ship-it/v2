@@ -26,3 +26,28 @@ class ConstructionMilestone(models.Model):
 
     def __str__(self):
         return f"Étape {self.stage_number} : {self.title} ({self.progress_percent}%)"
+
+
+class ConstructionShowcase(models.Model):
+    title = models.CharField(
+        max_length=200,
+        default="Élévation de la structure R+7",
+        verbose_name="Libellé au-dessus de la photo",
+    )
+    caption = models.CharField(
+        max_length=250,
+        default="Coulage des planchers & suivi des normes parasismiques",
+        verbose_name="Légende de la photo",
+    )
+    photo = models.ImageField(
+        upload_to="construction/showcase/",
+        blank=True,
+        verbose_name="Photo principale du chantier",
+    )
+
+    class Meta:
+        verbose_name = "Photo principale du chantier"
+        verbose_name_plural = "Photo principale du chantier"
+
+    def __str__(self):
+        return self.title
