@@ -25,8 +25,8 @@ import { CookieConsent } from './components/CookieConsent';
 import { LegalPage } from './components/LegalPage';
 import { ErrorPage } from './components/ErrorPage';
 
-import { Apartment, ResidenceInfo, ConstructionMilestone, FAQItem } from './types';
-import { fetchResidence, fetchApartments, fetchConstructionMilestones, fetchFAQs, getCurrentUser, logoutUser, AuthUser } from './services/api';
+import { Apartment, ResidenceInfo, ConstructionMilestone, ConstructionShowcase, FAQItem } from './types';
+import { fetchResidence, fetchApartments, fetchConstructionMilestones, fetchConstructionShowcase, fetchFAQs, getCurrentUser, logoutUser, AuthUser } from './services/api';
 import { captureUTMParams } from './utils/utm';
 
 export function App() {
@@ -34,6 +34,10 @@ export function App() {
   const [residence, setResidence] = useState<ResidenceInfo | undefined>(undefined);
   const [apartments, setApartments] = useState<Apartment[]>([]);
   const [milestones, setMilestones] = useState<ConstructionMilestone[]>([]);
+  const [constructionShowcase, setConstructionShowcase] = useState<ConstructionShowcase>({
+    title: 'Élévation de la structure R+7',
+    caption: 'Coulage des planchers & suivi des normes parasismiques',
+  });
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [loading, setLoading] = useState(() => !['/politique-de-confidentialite', '/mentions-legales', '/politique-des-cookies', '/404', '/403', '/500'].includes(window.location.pathname.replace(/\/+$/, '') || '/'));
 
@@ -78,17 +82,19 @@ export function App() {
       const loadingStartedAt = Date.now();
 
       try {
-        const [currentUser, residenceData, apartmentsData, milestonesData, faqsData] = await Promise.all([
+        const [currentUser, residenceData, apartmentsData, milestonesData, showcaseData, faqsData] = await Promise.all([
           getCurrentUser(),
           fetchResidence(),
           fetchApartments(),
           fetchConstructionMilestones(),
+          fetchConstructionShowcase(),
           fetchFAQs()
         ]);
         setUser(currentUser);
         setResidence(residenceData);
         setApartments(apartmentsData);
         setMilestones(milestonesData);
+        setConstructionShowcase(showcaseData);
         setFaqs(faqsData);
       } catch (err) {
         console.error('Failed to load initial data', err);
@@ -180,7 +186,7 @@ export function App() {
             /></RevealSection>
 
             {/* Section 5: NOEMA, Un Projet Réel (Avancement Chantier) */}
-            <RevealSection delay={120}><ConstructionSection milestones={milestones} /></RevealSection>
+            <RevealSection delay={120}><ConstructionSection milestones={milestones} showcase={constructionShowcase} /></RevealSection>
 
             {/* Section 6: Le mot de Mme Bamba & présentation Uriel Group */}
             <RevealSection><StoryVideoSection /></RevealSection>

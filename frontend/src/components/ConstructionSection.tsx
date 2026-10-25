@@ -10,13 +10,14 @@ import {
   Sparkles,
   ExternalLink
 } from 'lucide-react';
-import { ConstructionMilestone } from '../types';
+import { ConstructionMilestone, ConstructionShowcase } from '../types';
 
 interface ConstructionSectionProps {
   milestones: ConstructionMilestone[];
+  showcase: ConstructionShowcase;
 }
 
-export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milestones }) => {
+export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milestones, showcase }) => {
   const timelineMilestones = milestones;
 
   return (
@@ -45,8 +46,8 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
           
           <div className="lg:col-span-7 relative rounded-2xl overflow-hidden bg-neutral-900 aspect-16/10 border border-neutral-200 shadow-md group">
             <img
-              src="./images/Photo actuelle du chantier.jpeg"
-              alt="Chantier réel de la Résidence NOEMA à Angré Djorogobité Abidjan"
+              src={showcase.photo || "./images/Photo actuelle du chantier.jpeg"}
+              alt={showcase.caption || "Chantier réel de la Résidence NOEMA à Angré Djorogobité Abidjan"}
               referrerPolicy="no-referrer"
               loading="lazy"
               decoding="async"
@@ -61,8 +62,12 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
             </div>
 
             <div className="absolute bottom-4 left-4 right-4 text-white">
-              <span className="text-xs font-semibold text-emerald-300">Élévation de la structure R+7</span>
-              <p className="text-sm sm:text-base font-bold">Coulage des planchers & suivi des normes parasismiques</p>
+              <span className="text-xs font-semibold text-emerald-300">
+                {showcase.title}
+              </span>
+              <p className="text-sm sm:text-base font-bold">
+                {showcase.caption}
+              </p>
             </div>
           </div>
 
@@ -112,6 +117,11 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
               const isInProgress = m.status === 'in_progress';
               const isFirstMilestone = m.stage_number === 1;
               const isFirstMilestoneDone = isFirstMilestone && isDone;
+              const progressLabel = isDone
+                ? "Achevé"
+                : isInProgress
+                  ? `En cours — ${m.progress_percent}%`
+                  : "À venir";
 
               return (
                 <div
@@ -157,7 +167,7 @@ export const ConstructionSection: React.FC<ConstructionSectionProps> = ({ milest
                   {/* Progress Bar & Date */}
                   <div className="space-y-1.5 sm:space-y-2 pt-2 border-t border-neutral-100">
                     <div className="flex justify-between text-[11px]">
-                      <span className={`${isFirstMilestoneDone ? 'text-white/90' : 'text-neutral-500'} font-medium`}>{m.date_display}</span>
+                      <span className={`${isFirstMilestoneDone ? 'text-white/90' : 'text-neutral-500'} font-medium`}>{progressLabel}</span>
                       <span className={`font-mono font-bold ${isFirstMilestoneDone ? 'text-white' : 'text-neutral-900'}`}>{m.progress_percent}%</span>
                     </div>
 

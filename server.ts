@@ -9,6 +9,7 @@ import {
   ResidenceInfo, 
   Apartment, 
   ConstructionMilestone, 
+  ConstructionShowcase,
   FAQItem, 
   LeadRecord, 
   LeadSubmission, 
@@ -157,6 +158,19 @@ async function getDjangoCollection<T>(resource: string, req: Request, query?: UR
     const payload = await response.json();
     if (Array.isArray(payload)) return payload as T[];
     return Array.isArray(payload?.results) ? payload.results as T[] : null;
+  } catch {
+    return null;
+  }
+}
+
+async function getDjangoResource<T>(resource: string, req: Request): Promise<T | null> {
+  try {
+    const response = await fetch(`${DJANGO_API_URL}/${resource}/`, {
+      headers: djangoHeaders(req), redirect: 'manual', signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    return payload?.data ?? null;
   } catch {
     return null;
   }
@@ -580,6 +594,17 @@ app.get('/api/construction', async (req: Request, res: Response) => {
   res.json({
     success: true,
     data: sorted
+  });
+});
+
+app.get('/api/construction/showcase', async (req: Request, res: Response) => {
+  const showcase = await getDjangoResource<ConstructionShowcase>('construction/showcase', req);
+  res.json({
+    success: true,
+    data: showcase || {
+      title: 'Élévation de la structure R+7',
+      caption: 'Coulage des planchers & suivi des normes parasismiques',
+    },
   });
 });
 

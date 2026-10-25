@@ -2,6 +2,7 @@ import {
   ResidenceInfo, 
   Apartment, 
   ConstructionMilestone, 
+  ConstructionShowcase,
   FAQItem, 
   LeadSubmission, 
   SimulationResult 
@@ -117,6 +118,13 @@ export async function fetchApartmentById(id: string): Promise<Apartment> {
 export async function fetchConstructionMilestones(): Promise<ConstructionMilestone[]> {
   const res = await fetch(`${API_BASE}/construction`);
   if (!res.ok) throw new Error('Construction API unavailable');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function fetchConstructionShowcase(): Promise<ConstructionShowcase> {
+  const res = await fetch(`${API_BASE}/construction/showcase`);
+  if (!res.ok) throw new Error('Construction showcase API unavailable');
   const data = await res.json();
   return data.data;
 }
