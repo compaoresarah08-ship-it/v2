@@ -41,7 +41,7 @@ const profiles = [
 
 export const ProjectProfilesSection: React.FC<ProjectProfilesSectionProps> = ({ onSelectProfile, onOpenSimulator }) => {
   return (
-    <section id="votre-projet" className="py-20 lg:py-28 bg-white border-t border-neutral-200/80 relative">
+    <section className="py-20 lg:py-28 bg-white border-t border-neutral-200/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         <div className="max-w-3xl mb-14 space-y-4 text-left">

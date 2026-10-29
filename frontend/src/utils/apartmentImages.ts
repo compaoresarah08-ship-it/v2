@@ -1,4 +1,5 @@
 import { ApartmentType } from '../types';
+import { publicAssetUrl } from './publicAssetUrl';
 
 const fallbackPhotosByType: Record<ApartmentType, string[]> = {
   t2: [
@@ -28,10 +29,12 @@ export function resolveApartmentImagePath(path: string): string {
     .replace("/Rendus F3'/", '/Rendus F3/')
     .replace('/Entree.webp', '/Entr#U00e9e.webp');
 
-  return normalizedPath
+  const encodedPath = normalizedPath
     .split('/')
     .map((segment, index) => index === 0 ? segment : encodeURIComponent(decodeURIComponent(segment)))
     .join('/');
+
+  return publicAssetUrl(encodedPath);
 }
 
 export function apartmentImageSources(type: ApartmentType, photos: string[]): string[] {

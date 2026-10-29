@@ -1,36 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  ArrowDown, 
-  Calculator, 
-  Building, 
-  MapPin, 
-  ShieldCheck, 
-  Calendar, 
-  Sparkles,
-  ChevronRight,
-  PhoneCall
-} from 'lucide-react';
-import { ResidenceInfo } from '../types';
+import React, { useState } from 'react';
+import { Building, Calculator, ChevronRight, MapPin, ShieldCheck } from 'lucide-react';
 
 interface HeroSectionProps {
-  residence?: ResidenceInfo;
   onOpenSimulator: () => void;
-  onOpenVisioAppointment: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({
-  residence,
-  onOpenSimulator,
-  onOpenVisioAppointment
-}) => {
-  const [scrollOffset, setScrollOffset] = useState(0);
+export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenSimulator }) => {
   const [heroTilt, setHeroTilt] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleScroll = () => setScrollOffset(Math.min(window.scrollY * 0.12, 72));
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const handleHeroPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -42,7 +18,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section 
       id="hero" 
-      className="relative min-h-[92vh] pt-28 pb-16 lg:pt-36 lg:pb-24 flex items-center bg-[#FAFAFA] overflow-hidden border-b border-neutral-200/70"
+      className="relative pt-14 pb-12 sm:pt-16 sm:pb-14 lg:pt-20 lg:pb-16 flex items-center bg-[#FAFAFA] overflow-hidden border-b border-neutral-200/70"
     >
       {/* Subtle architectural background grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#E5E7EB_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
@@ -51,31 +27,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           
           {/* Left Column: Editorial Value Proposition & CTAs */}
-          <div className="lg:col-span-7 space-y-5 sm:space-y-7 text-left">
+          <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
             
-            {/* Real Estate Program Verified Badge */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200/90 shadow-xs text-xs font-semibold text-neutral-800">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-neutral-500 font-medium">La résidence conçue par et pour la diaspora</span>
-            </div>
-
-            {/* Main Headline */}
             <div className="space-y-3">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-extrabold tracking-tight text-neutral-900 leading-[1.08]">
-                Devenez propriétaire <span className="text-neutral-900 block">à Abidjan, où que vous soyez.</span>
-              </h1>
-              <p className="text-sm sm:text-base font-semibold tracking-wider text-emerald-800 uppercase">
-                RÉSIDENCE NOEMA • Angré Djorogobité, Abidjan
+              <p className="text-xs sm:text-sm font-bold tracking-[0.16em] text-[#9a4a28] uppercase">
+                RÉSIDENCE NOEMA • ANGRÉ DJOROGOBITÉ, ABIDJAN
               </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-extrabold tracking-tight text-neutral-900 leading-[1.08]">
+                Découvrez la <span className="text-[#9a4a28]">Résidence NOEMA,</span> votre prochain investissement à Abidjan.
+              </h2>
             </div>
 
-            {/* Short strong value statement */}
             <p className="text-base sm:text-lg text-neutral-600 font-normal leading-relaxed max-w-xl">
-              Une résidence premium pensée pour investir, préparer son retour, disposer de son pied-à-terre à Abidjan et générer des revenus.
+              Une résidence de standing pensée pour investir, <strong className="font-bold text-neutral-800">préparer votre retour,</strong> disposer de votre pied-à-terre à Abidjan et générer des revenus locatifs.
             </p>
-            <p className="text-xs sm:text-sm font-bold tracking-wide text-neutral-800 uppercase">
-              Achat à distance • Financement • Accompagnement de A à Z
-            </p>
+
+            <ul className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+              <li className="flex items-start gap-2.5 text-sm text-neutral-800">
+                <Building className="mt-0.5 h-4 w-4 shrink-0 text-[#9a4a28]" />
+                <span><strong>Appartements T2 &amp; T3</strong><span className="block text-xs text-neutral-500">Surfaces optimisées</span></span>
+              </li>
+              <li className="flex items-start gap-2.5 text-sm text-neutral-800">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#9a4a28]" />
+                <span><strong>Emplacement premium</strong><span className="block text-xs text-neutral-500">Cocody Angré</span></span>
+              </li>
+              <li className="flex items-start gap-2.5 text-sm text-neutral-800">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#9a4a28]" />
+                <span><strong>Financement possible</strong><span className="block text-xs text-neutral-500">Avec nos partenaires</span></span>
+              </li>
+            </ul>
 
             {/* Primary CTAs */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
@@ -98,61 +78,42 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </a>
             </div>
 
-            <button
-              id="hero-cta-callback"
-              onClick={onOpenVisioAppointment}
-              className="inline-flex items-center gap-2 text-xs font-bold text-neutral-700 hover:text-neutral-900 uppercase tracking-wide transition-colors"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Être rappelé</span>
-            </button>
-
-            {/* Verified Trust Badges */}
             <div className="pt-6 border-t border-neutral-200/80 grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="flex flex-col">
                 <span className="text-xs text-neutral-600 font-medium">Bâtiment</span>
-                <span className="text-sm font-bold text-neutral-900 flex items-center gap-1">
-                  <Building className="w-3.5 h-3.5 text-neutral-600" />
-                  R+7 Standing
-                </span>
+                <span className="text-sm font-bold text-neutral-900">R+7 Standing</span>
+                <span className="mt-1 text-xs leading-snug text-neutral-500">Architecture contemporaine</span>
               </div>
 
               <div className="flex flex-col">
                 <span className="text-xs text-neutral-600 font-medium">Typologies</span>
-                <span className="text-sm font-bold text-neutral-900">
-                  T2 & T3
-                </span>
+                <span className="text-sm font-bold text-neutral-900">T2 &amp; T3</span>
+                <span className="mt-1 text-xs leading-snug text-neutral-500">Espaces fonctionnels</span>
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xs text-neutral-600 font-medium">Livraison Prévisionnelle</span>
-                <span className="text-sm font-bold text-neutral-900 flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-neutral-600" />
-                  {residence?.delivery_date_estimated || 'janvier 2029'}
-                </span>
+                <span className="text-xs text-neutral-600 font-medium">Livraison prévisionnelle</span>
+                <span className="text-sm font-bold text-neutral-900">Janvier 2029</span>
+                <span className="mt-1 text-xs leading-snug text-neutral-500">Construction en cours</span>
               </div>
 
               <div className="flex flex-col">
                 <span className="text-xs text-neutral-600 font-medium">Accompagnement</span>
-                <span className="text-sm font-bold text-emerald-700 flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  ImmoDiaspo
-                </span>
+                <span className="text-sm font-bold text-neutral-900">ImmoDiaspo</span>
+                <span className="mt-1 text-xs leading-snug text-neutral-500">De A à Z</span>
               </div>
             </div>
 
           </div>
 
           {/* Right Column: Architectural Hero Image with Frame & Parallax Effect */}
-          <div className="lg:col-span-5 relative" onPointerMove={handleHeroPointerMove} onPointerLeave={() => setHeroTilt({ x: 0, y: 0 })}>
-            <div className="hero-orbit pointer-events-none absolute -right-8 -top-8 hidden h-28 w-28 rounded-full border border-emerald-400/40 border-dashed lg:block" />
+          <div className="relative lg:col-span-6" onPointerMove={handleHeroPointerMove} onPointerLeave={() => setHeroTilt({ x: 0, y: 0 })}>
             <div className="relative mx-auto max-w-md lg:max-w-none group">
               
               {/* Outer Glow & Architectural White Framing */}
-              <div className="relative rounded-2xl bg-white p-3 sm:p-4 shadow-xl border border-neutral-200/90 transition-all duration-500 group-hover:shadow-2xl" style={{ transform: `perspective(1200px) rotateX(${heroTilt.x}deg) rotateY(${heroTilt.y}deg) translateY(${scrollOffset * 0.35}px)`, transformStyle: 'preserve-3d' }}>
+              <div className="relative rounded-2xl bg-white p-3 sm:p-4 shadow-xl border border-neutral-200/90 transition-all duration-500 group-hover:shadow-2xl" style={{ transform: `perspective(1200px) rotateX(${heroTilt.x}deg) rotateY(${heroTilt.y}deg)`, transformStyle: 'preserve-3d' }}>
                 
-                {/* Image Container with precise aspect ratio matching real building */}
-                <div className="relative rounded-xl overflow-hidden bg-neutral-100 aspect-[4/3] sm:aspect-3/4 max-h-[320px] sm:max-h-[580px]">
+                <div className="relative rounded-xl overflow-hidden bg-neutral-100 aspect-[5/4]">
                   <img
                     id="hero-facade-image"
                     src="./images/noema-facade.webp"
@@ -162,32 +123,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     fetchPriority="high"
                     decoding="async"
                     className="w-full h-full object-cover object-center transform group-hover:scale-103 transition-transform duration-700 ease-out"
-                    style={{ transform: `translate3d(0, ${scrollOffset}px, 0) scale(1.04)` }}
                   />
                 </div>
 
-                {/* Floating Micro-Card 2: Diaspora Safety */}
-                <div className="hidden sm:flex absolute -top-4 -right-4 bg-white rounded-xl px-3.5 py-2.5 shadow-lg border border-neutral-200/90 items-center gap-2 text-xs font-semibold text-neutral-800">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Achat à distance 100% sécurisé</span>
+                <div className="absolute bottom-5 left-5 rounded-xl border border-white/60 bg-white/95 px-4 py-2.5 shadow-lg backdrop-blur-sm">
+                  <p className="text-xs font-bold text-neutral-900">Cocody Angré</p>
+                  <p className="mt-0.5 text-[10px] text-neutral-600">Abidjan, Côte d'Ivoire</p>
                 </div>
-
               </div>
 
             </div>
           </div>
 
-        </div>
-
-        {/* Bottom anchor scroll hint */}
-        <div className="hidden lg:flex justify-center pt-10">
-          <a
-            href="#decouvrir"
-            className="inline-flex items-center gap-2 text-xs font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
-          >
-            <span>Découvrir le programme</span>
-            <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
-          </a>
         </div>
 
       </div>

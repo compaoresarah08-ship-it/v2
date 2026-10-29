@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
+import { DiasporaFundingIntroSection } from './components/DiasporaFundingIntroSection';
 import { DiscoverSection } from './components/DiscoverSection';
 import { ExperienceSection } from './components/ExperienceSection';
 import { ApartmentsSection } from './components/ApartmentsSection';
@@ -165,11 +166,11 @@ export function App() {
 
           {/* Main Content Sections */}
           <main className="flex-1">
-            {/* Section 1: Hero Section — positionnement diaspora */}
+            <DiasporaFundingIntroSection />
+
+            {/* Section 2: Résidence NOEMA */}
             <HeroSection
-              residence={residence}
               onOpenSimulator={() => handleOpenSimulator()}
-              onOpenVisioAppointment={() => setIsVisioAppointmentOpen(true)}
             />
 
             {/* Galerie des espaces communs : hall, piscine et parking */}

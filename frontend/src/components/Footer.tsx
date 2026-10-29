@@ -134,7 +134,7 @@ export const Footer: React.FC<FooterProps> = ({
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#d15a3a] shrink-0" />
-                <span>+225 27 22 00 11 22</span>
+                <a href="tel:+377678630862" className="hover:text-[#d15a3a] hover:underline">+377 6 78 63 08 62</a>
               </div>
               <div className="flex items-center gap-2.5">
                 <MessageCircle className="w-4 h-4 text-[#d15a3a] shrink-0" />
